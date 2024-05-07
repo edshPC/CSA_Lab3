@@ -1,10 +1,10 @@
 # CSA_Lab3
-Лабораторная работа #3 по дисциплине "Архитектура компьютера"
+Лабораторная работа #3 по дисциплине "Архитектура компьютера"\
 Выполнил: Щербинин Эдуард Павлович, P3214
 
-Вариант из таблицы:
-`asm | stack | neum | mc -> hw | instr | struct | stream | port | cstr | prob2 | cache`
-Выполнен в базовом варианте:
+Вариант из таблицы:\
+`asm | stack | neum | mc -> hw | instr | struct | stream | port | cstr | prob2 | cache`\
+Выполнен в базовом варианте:\
 `asm | stack | neum | mc | tick | struct | stream | port | cstr | prob2 | -`
 
 ## Язык программирования
@@ -29,6 +29,8 @@
 
 <op1> ::= "push"
       | "pop"
+      
+<comment> ::= ' '* ';' [^\n]*
 
 ```
 
