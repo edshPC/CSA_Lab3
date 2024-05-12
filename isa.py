@@ -4,7 +4,6 @@ import re
 
 
 class Opcode(str, Enum):
-    
     PUSH = "push"
 
     @property

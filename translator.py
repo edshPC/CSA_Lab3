@@ -22,7 +22,7 @@ def translate_stage_1(text: str):
             assert label not in labels, f"Redefinition of label: {label}"
             labels[label] = pc
         else:  # токен содержит инструкцию
-            mnemonic, *args = token.split()
+            mnemonic, *args = re.split(r',? +', token)
             opcode = Opcode(mnemonic)
             assert len(args) == opcode.arg_count, f"Invalid number of args for '{mnemonic}': Expected {opcode.arg_count}, got {len(args)}"
             code.append({"index": pc, "opcode": opcode, "args": args})
@@ -46,9 +46,7 @@ def translate_stage_2(labels, code):
 def translate(text):
     text = get_meaningful(text)  # Удаление комментариев и пустых строк
     labels, code = translate_stage_1(text)
-    code = translate_stage_2(labels, code)
-
-    return code
+    return translate_stage_2(labels, code)
 
 
 def main(source, target):
