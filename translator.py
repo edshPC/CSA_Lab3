@@ -82,7 +82,7 @@ def main(source, target):
         source = f.read()
 
     program = translate(source)
-    write_code(target, program)
+    write_program(target, program)
     print("source LoC:", source.count("\n")+1, "code instr:", len(program["code"]))
 
 
