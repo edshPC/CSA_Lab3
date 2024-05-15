@@ -1,16 +1,10 @@
 from util import *
 from isa import *
 
-# Задание команд через микрокод. Каждый элемент - 1 такт, собирается из микрокоманд.
-# Для задания нескольких тактов используется кортеж
-instructions: dict[Opcode: tuple[int]] = {
-    Opcode.NOP: MC.NOP,
-    Opcode.HLT: MC.HLT,
-    Opcode.PUSH: MC.latchAR | MC.dsPUSH,
-    Opcode.POP: MC.latchAR | MC.dsPOP,
-}
+
 
 class DataPath:
+    instruction_micro_address = {}  # Адрес нахождения инструкций в памяти микрокоманд
     address_reg = 0
     output_buf = []
     def __init__(self, code: list[dict], input_buf: list, memory_size: int = 2 ** 16, ds_size: int = 2 ** 10):
@@ -27,13 +21,14 @@ class DataPath:
                 self.memory[idx:idx+len(args)] = args
                 continue
 
-            # Старшие 32 бита - микрокод, младшие - аргумент
-            self.memory[idx] |= instructions.get(opcode, 0)
+            # Старшие 32 бита - адрес микрокода инструкции, младшие - аргумент
+            self.memory[idx] |= self.instruction_micro_address.get(opcode, 0) << 32
             if len(args) == 1: # Есть аргумент
+                # Старший бит показывает прямую загрузку аргумента вместо обращения к памяти
                 if type(args[0]) == int: # Аргумент - адрес
                     self.memory[idx] |= args[0]
                 else: # Аргумент - прямая загрузка
-                    self.memory[idx] |= MC.DIRECT | int(args[0], 0)
+                    self.memory[idx] |= (1 << 31) | (int(args[0], 0) & 0x8FFFFFFF)
 
 
 

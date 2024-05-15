@@ -7,8 +7,9 @@ def simulation(program, input_tokens, limit=10000, **kwargs):
     datapath = DataPath(program["code"], input_tokens, **kwargs)
     controluint = ControlUnit(program["start"], datapath, **kwargs)
     try:
-        while True:
-            controluint.tick()
+        while controluint.tick() < limit:
+            pass
+        # Превышен лимит
     except EOFError:
         pass
     except SystemExit:

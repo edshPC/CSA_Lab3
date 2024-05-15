@@ -44,11 +44,11 @@ class Opcode(str, Enum):
     def __str__(self):
         return str(self.value)
 
-counter = 32
-def autoshift():  # 1 << counter++
+counter = 0
+def autoshift():  # 1 << ++counter
     global counter
     counter += 1
-    return 1 << (counter - 1)
+    return 1 << counter
 
 # Микрокоды команд
 class MC(int, Enum):
@@ -58,12 +58,18 @@ class MC(int, Enum):
     # Вентили
     latchTOS = autoshift()
     latchPC = autoshift()
+    latchMPC = autoshift()
     latchAR = autoshift()
+
+    # Мультиплексоры
+    ARmuxPC = autoshift()
 
     # Операции со стеком
     dsPUSH = autoshift()
     dsPOP = autoshift()
-
+    # Операции с памятью
+    memREAD = autoshift()
+    memWRITE = autoshift()
 
     #ALU
     aluADD = autoshift()
@@ -76,6 +82,8 @@ class MC(int, Enum):
 
     DIRECT = autoshift()  # Прямая загрузка аргумента
     HLT = autoshift()
+
+
 
 
 
