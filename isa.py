@@ -54,6 +54,7 @@ def autoshift():  # 1 << ++counter
 class MC(int, Enum):
     NOP = 0
     BRANCH = autoshift()  # Команда ветвления?
+    EndOfCommand = autoshift()
 
     # Вентили
     latchTOS = autoshift()
@@ -63,6 +64,8 @@ class MC(int, Enum):
 
     # Мультиплексоры
     ARmuxPC = autoshift()
+    ARmuxBUF = autoshift()
+    ARmuxTOS = autoshift()
 
     # Операции со стеком
     dsPUSH = autoshift()
@@ -72,6 +75,8 @@ class MC(int, Enum):
     memWRITE = autoshift()
 
     #ALU
+    aluLEFT = autoshift()
+    aluRIGHT = autoshift()
     aluADD = autoshift()
     aluSUB = autoshift()
     aluMUL = autoshift()
@@ -84,7 +89,7 @@ class MC(int, Enum):
     HLT = autoshift()
 
 
-
+assert counter < 64, "Microcommand word is above 64 bit"
 
 
 def write_program(filename, program):

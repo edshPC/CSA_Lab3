@@ -4,18 +4,18 @@ from controlunit import ControlUnit
 from isa import read_program
 
 def simulation(program, input_tokens, limit=10000, **kwargs):
-    datapath = DataPath(program["code"], input_tokens, **kwargs)
+    datapath = DataPath(input_tokens, **kwargs)
     controluint = ControlUnit(program["start"], datapath, **kwargs)
+    datapath.load_program(program["code"])
     try:
         while controluint.tick() < limit:
             pass
         # Превышен лимит
+        print("Первышен лимит")
     except EOFError:
         pass
     except SystemExit:
-        pass
-    except StopIteration:
-        pass
+        print("Halted")
 
 def main(program_file, input_file = None):
     program = read_program(program_file)

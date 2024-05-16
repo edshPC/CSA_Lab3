@@ -47,7 +47,7 @@ def translate_stage_1(text: str):
 
             code.append({"index": pc, "opcode": opcode, "args": args})
             pc += pc_diff
-
+    code.append({"index": pc, "opcode": Opcode.HLT, "args": []}) # HLT в конце программы
     return labels, code
 
 
