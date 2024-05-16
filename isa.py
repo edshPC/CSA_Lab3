@@ -23,6 +23,8 @@ class Opcode(str, Enum):
     DUP = "dup"
 
     JMP = "jmp"
+    JZ = "jz"
+    JN = "jn"
 
     # Оператор загрузки литералов в память, не может быть вызван из программы
     _MEM = "mem"
@@ -37,6 +39,8 @@ class Opcode(str, Enum):
             self.PUSH: (1, 1),
             self.POP: (0, 1),
             self.JMP: (1, 1),
+            self.JZ: (1, 1),
+            self.JN: (1, 1),
 
             self._MEM: (-1, -1)
         }.get(self, (0, 0))
@@ -53,7 +57,6 @@ def autoshift():  # 1 << ++counter
 # Микрокоды команд
 class MC(int, Enum):
     NOP = 0
-    BRANCH = autoshift()  # Команда ветвления?
     EndOfCommand = autoshift()
 
     # Вентили
@@ -65,7 +68,6 @@ class MC(int, Enum):
     # Мультиплексоры
     ARmuxPC = autoshift()
     ARmuxBUF = autoshift()
-    ARmuxTOS = autoshift()
 
     # Операции со стеком
     dsPUSH = autoshift()
@@ -82,10 +84,15 @@ class MC(int, Enum):
     aluMUL = autoshift()
     aluDIV = autoshift()
     aluMOD = autoshift()
+    aluNOP = autoshift()
     aluINC = autoshift()
     aluDEC = autoshift()
 
-    DIRECT = autoshift()  # Прямая загрузка аргумента
+    # Ветвление
+    BRANCH = autoshift()
+    jzBRANCH = autoshift()
+    jnBRANCH = autoshift()
+
     HLT = autoshift()
 
 

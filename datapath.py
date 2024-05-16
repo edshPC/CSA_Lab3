@@ -30,13 +30,19 @@ class DataPath:
                 continue
             # Старшие 32 бита - адрес микрокода инструкции, младшие - аргумент
             self.memory[idx] |= self.instruction_micro_address.get(opcode, 0) << 32
-            print(self.memory[idx])
             if len(args) == 1: # Есть аргумент
                 # Старший бит показывает прямую загрузку аргумента вместо обращения к памяти
                 if type(args[0]) == int: # Аргумент - адрес
                     self.memory[idx] |= args[0]
                 else: # Аргумент - прямая загрузка
                     self.memory[idx] |= (1 << 31) | (int(args[0], 0) & 0x7FFFFFFF)
+
+    @property
+    def flag_zero(self):
+        return self.data_stack.top == 0
+    @property
+    def flag_negative(self):
+        return self.data_stack.top < 0
 
     def sig_dsPUSH(self):
         self.data_stack.push(0)
@@ -48,8 +54,6 @@ class DataPath:
             self.address_reg = self.controlunit.pc
         if self.controlunit.microcommand & MC.ARmuxBUF:
             self.address_reg = self.buffer & 0xFFFFFFFF
-        if self.controlunit.microcommand & MC.ARmuxTOS:
-            self.address_reg = self.data_stack.top
     def sig_latchTOS(self):
         self.data_stack.top = self.buffer
 
@@ -77,11 +81,11 @@ class DataPath:
         self.buffer = self.alu.left // self.alu.right
     def sig_aluMOD(self):
         self.buffer = self.alu.left % self.alu.right
+    def sig_aluNOP(self):
+        self.buffer = self.alu.left
     def sig_aluINC(self):
         self.alu.left += 1
-        self.alu.right += 1
     def sig_aluDEC(self):
         self.alu.left -= 1
-        self.alu.right -= 1
 
 

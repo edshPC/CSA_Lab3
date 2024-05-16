@@ -9,6 +9,17 @@ instructions: dict[Opcode: tuple[int]] = {
     Opcode.HLT: (MC.HLT,),
     Opcode.PUSH: (MC.latchAR | MC.ARmuxBUF | MC.dsPUSH, MC.memREAD | MC.latchTOS | MC.EndOfCommand),
     Opcode.POP: (MC.latchAR | MC.ARmuxBUF, MC.memWRITE | MC.dsPOP | MC.EndOfCommand),
+    Opcode.ADD: (MC.aluRIGHT | MC.dsPOP, MC.aluLEFT | MC.aluADD | MC.latchTOS | MC.EndOfCommand),
+    Opcode.SUB: (MC.aluRIGHT | MC.dsPOP, MC.aluLEFT | MC.aluSUB | MC.latchTOS | MC.EndOfCommand),
+    Opcode.MUL: (MC.aluRIGHT | MC.dsPOP, MC.aluLEFT | MC.aluMUL | MC.latchTOS | MC.EndOfCommand),
+    Opcode.DIV: (MC.aluRIGHT | MC.dsPOP, MC.aluLEFT | MC.aluDIV | MC.latchTOS | MC.EndOfCommand),
+    Opcode.MOD: (MC.aluRIGHT | MC.dsPOP, MC.aluLEFT | MC.aluMOD | MC.latchTOS | MC.EndOfCommand),
+    Opcode.INC: (MC.aluLEFT | MC.aluINC | MC.aluNOP, MC.latchTOS | MC.EndOfCommand),
+    Opcode.DEC: (MC.aluLEFT | MC.aluDEC | MC.aluNOP, MC.latchTOS | MC.EndOfCommand),
+    Opcode.DUP: (MC.aluLEFT | MC.aluNOP | MC.dsPUSH, MC.latchTOS | MC.EndOfCommand),
+    Opcode.JMP: (MC.BRANCH | MC.EndOfCommand,),
+    Opcode.JZ: (MC.BRANCH | MC.jzBRANCH | MC.EndOfCommand,),
+    Opcode.JN: (MC.BRANCH | MC.jnBRANCH | MC.EndOfCommand,),
 }
 
 class ControlUnit:
@@ -30,13 +41,14 @@ class ControlUnit:
         for opcode in instructions:  # Идём по списку инструкций
             datapath.instruction_micro_address[opcode] = len(self.microcommand_mem)
             self.microcommand_mem.extend(instructions[opcode])
-        print(datapath.instruction_micro_address)
 
 
     def tick(self):
-        print(self.pc, self.microcommand_pc)
         self.microcommand = self.microcommand_mem[self.microcommand_pc]
         self.microcommand_pc += 1
+
+        if self.microcommand & MC.HLT:
+            exit()
         if self.microcommand & MC.EndOfCommand:
             self.microcommand_pc = 1
             self.pc += 1
@@ -48,6 +60,10 @@ class ControlUnit:
             self.datapath.sig_aluLEFT()
         if self.microcommand & MC.aluRIGHT:
             self.datapath.sig_aluRIGHT()
+        if self.microcommand & MC.aluINC:
+            self.datapath.sig_aluINC()
+        if self.microcommand & MC.aluDEC:
+            self.datapath.sig_aluDEC()
         if self.microcommand & MC.aluADD:
             self.datapath.sig_aluADD()
         if self.microcommand & MC.aluSUB:
@@ -58,10 +74,8 @@ class ControlUnit:
             self.datapath.sig_aluDIV()
         if self.microcommand & MC.aluMOD:
             self.datapath.sig_aluMOD()
-        if self.microcommand & MC.aluINC:
-            self.datapath.sig_aluINC()
-        if self.microcommand & MC.aluDEC:
-            self.datapath.sig_aluDEC()
+        if self.microcommand & MC.aluNOP:
+            self.datapath.sig_aluNOP()
 
         if self.microcommand & MC.dsPUSH:
             self.datapath.sig_dsPUSH()
@@ -80,13 +94,23 @@ class ControlUnit:
         if self.microcommand & MC.dsPOP:
             self.datapath.sig_dsPOP()
 
-        if self.microcommand & MC.HLT:
-            exit()
+        if self.microcommand & MC.BRANCH:
+            self.sig_BRANCH()
 
+        print(self._tick, self.pc, self.datapath.data_stack)
         self._tick += 1
         return self._tick
 
     def sig_latchMPC(self):
         self.microcommand_pc = self.datapath.buffer >> 32
+
+    def sig_BRANCH(self):
+        jump = True
+        if self.microcommand & MC.jzBRANCH:
+            jump &= self.datapath.flag_zero
+        if self.microcommand & MC.jnBRANCH:
+            jump &= self.datapath.flag_negative
+        if jump:
+            self.pc = self.datapath.buffer & 0x7FFFFFFF
 
 

@@ -2,6 +2,7 @@ from collections import deque
 
 class Stack(deque):
     def push(self, x):
+        assert self.size() < self.maxlen, "StackOverflow"
         self.append(x)
 
     @property
