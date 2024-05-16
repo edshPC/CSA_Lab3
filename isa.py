@@ -25,6 +25,8 @@ class Opcode(str, Enum):
     JMP = "jmp"
     JZ = "jz"
     JN = "jn"
+    CALL = "call"
+    RET = "ret"
 
     # Оператор загрузки литералов в память, не может быть вызван из программы
     _MEM = "mem"
@@ -41,6 +43,7 @@ class Opcode(str, Enum):
             self.JMP: (1, 1),
             self.JZ: (1, 1),
             self.JN: (1, 1),
+            self.CALL: (1, 1),
 
             self._MEM: (-1, -1)
         }.get(self, (0, 0))
@@ -92,6 +95,8 @@ class MC(int, Enum):
     BRANCH = autoshift()
     jzBRANCH = autoshift()
     jnBRANCH = autoshift()
+    pushSTATE = autoshift()
+    popSTATE = autoshift()
 
     HLT = autoshift()
 

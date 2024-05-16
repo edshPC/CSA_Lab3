@@ -15,3 +15,10 @@ class Stack(deque):
 
     def size(self):
         return len(self)
+
+# Расширяет 31-битное число, если отрицательно
+def extend_bits(num_31bit):
+    num_31bit &= 0x7FFFFFFF
+    if num_31bit & 0x40000000:
+        return -(-num_31bit & 0x3FFFFFFF)
+    return num_31bit

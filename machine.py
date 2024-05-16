@@ -23,10 +23,11 @@ def main(program_file, input_file = None):
     if input_file is not None:
         with open(input_file, "r", encoding="utf-8") as file:
             input_tokens = [c for c in file.read()]
+    print(input_tokens)
 
     simulation(program, input_tokens)
 
 if __name__ == "__main__":
-    assert len(sys.argv) == 3, "Wrong arguments: machine.py <program_file> <input_file>"
-    _, code_file, input_file = sys.argv
-    main(code_file, input_file)
+    assert 2 <= len(sys.argv) <= 3, "Wrong arguments: machine.py <program_file> [<input_file>]"
+    _, program_file, *input_file = sys.argv
+    main(program_file, *input_file)

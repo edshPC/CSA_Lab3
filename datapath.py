@@ -58,12 +58,17 @@ class DataPath:
         self.data_stack.top = self.buffer
 
     def sig_memREAD(self):
+        if not self.address_reg: # NULL
+            return
         if self.address_reg & (1 << 31): # Прямая загрузка
-            self.buffer = self.address_reg & 0x7FFFFFFF
+            self.buffer = extend_bits(self.address_reg)
         else:
             self.buffer = self.memory[self.address_reg]
 
     def sig_memWRITE(self):
+        if not self.address_reg: # NULL
+            return
+        assert self.address_reg & (1 << 31) == 0, "Cannot access memory by address, use labels"
         self.memory[self.address_reg] = self.data_stack.top
 
 

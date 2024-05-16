@@ -60,13 +60,13 @@ def translate_stage_2(labels, code):
             if instruction["opcode"] == Opcode._MEM:
                 continue
 
-            if re.fullmatch(r'[a-z_]+', args[i], flags=re.IGNORECASE):
+            if re.fullmatch(r'[a-zA-Z_]+', args[i]):
                 # Если это метка
                 assert args[i] in labels, f"Label not defined: {args[i]}"
                 args[i] = labels[args[i]]
             else:
                 # Если это литерал
-                assert re.fullmatch(r'0x[\da-f]+|\d+', args[i], flags=re.IGNORECASE), f"Unknown type of argument: {args[i]}"
+                assert re.fullmatch(r'0x[\da-fA-F]+|-?\d+', args[i]), f"Unknown type of argument: {args[i]}"
     return startpos, code
 
 

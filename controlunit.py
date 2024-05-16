@@ -20,6 +20,9 @@ instructions: dict[Opcode: tuple[int]] = {
     Opcode.JMP: (MC.BRANCH | MC.EndOfCommand,),
     Opcode.JZ: (MC.BRANCH | MC.jzBRANCH | MC.EndOfCommand,),
     Opcode.JN: (MC.BRANCH | MC.jnBRANCH | MC.EndOfCommand,),
+    Opcode.CALL: (MC.BRANCH | MC.pushSTATE | MC.EndOfCommand,),
+    Opcode.RET: (MC.BRANCH | MC.popSTATE | MC.EndOfCommand,),
+
 }
 
 class ControlUnit:
@@ -105,6 +108,14 @@ class ControlUnit:
         self.microcommand_pc = self.datapath.buffer >> 32
 
     def sig_BRANCH(self):
+        if not self.datapath.buffer: # NULL
+            return
+        assert self.datapath.buffer & (1 << 31) == 0, "Cannot access memory by address, use labels"
+        if self.microcommand & MC.pushSTATE:
+            self.ret_stack.push(self.pc)
+        if self.microcommand & MC.popSTATE:
+            self.datapath.buffer = self.ret_stack.pop()
+
         jump = True
         if self.microcommand & MC.jzBRANCH:
             jump &= self.datapath.flag_zero
