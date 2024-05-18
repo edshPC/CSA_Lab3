@@ -14,6 +14,7 @@ instructions: dict[Opcode: tuple[int]] = {
     Opcode.MUL: (MC.aluRIGHT | MC.dsPOP, MC.aluLEFT | MC.aluMUL | MC.latchTOS | MC.EndOfCommand),
     Opcode.DIV: (MC.aluRIGHT | MC.dsPOP, MC.aluLEFT | MC.aluDIV | MC.latchTOS | MC.EndOfCommand),
     Opcode.MOD: (MC.aluRIGHT | MC.dsPOP, MC.aluLEFT | MC.aluMOD | MC.latchTOS | MC.EndOfCommand),
+    Opcode.NEG: (MC.aluLEFT | MC.aluNEG | MC.aluNOP, MC.latchTOS | MC.EndOfCommand),
     Opcode.INC: (MC.aluLEFT | MC.aluINC | MC.aluNOP, MC.latchTOS | MC.EndOfCommand),
     Opcode.DEC: (MC.aluLEFT | MC.aluDEC | MC.aluNOP, MC.latchTOS | MC.EndOfCommand),
     Opcode.DUP: (MC.aluLEFT | MC.aluNOP | MC.dsPUSH, MC.latchTOS | MC.EndOfCommand),
@@ -63,6 +64,8 @@ class ControlUnit:
             self.datapath.sig_aluLEFT()
         if self.microcommand & MC.aluRIGHT:
             self.datapath.sig_aluRIGHT()
+        if self.microcommand & MC.aluNEG:
+            self.datapath.sig_aluNEG()
         if self.microcommand & MC.aluINC:
             self.datapath.sig_aluINC()
         if self.microcommand & MC.aluDEC:

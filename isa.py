@@ -18,6 +18,7 @@ class Opcode(str, Enum):
     MUL = "mul"
     DIV = "div"
     MOD = "mod"
+    NEG = "neg"
     INC = "inc"
     DEC = "dec"
     DUP = "dup"
@@ -88,6 +89,7 @@ class MC(int, Enum):
     aluDIV = autoshift()
     aluMOD = autoshift()
     aluNOP = autoshift()
+    aluNEG = autoshift()
     aluINC = autoshift()
     aluDEC = autoshift()
 

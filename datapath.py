@@ -88,6 +88,8 @@ class DataPath:
         self.buffer = self.alu.left % self.alu.right
     def sig_aluNOP(self):
         self.buffer = self.alu.left
+    def sig_aluNEG(self):
+        self.alu.left *= -1
     def sig_aluINC(self):
         self.alu.left += 1
     def sig_aluDEC(self):
