@@ -9,6 +9,8 @@ instructions: dict[Opcode: tuple[int]] = {
     Opcode.HLT: (MC.HLT,),
     Opcode.PUSH: (MC.latchAR | MC.ARmuxBUF | MC.dsPUSH, MC.memREAD | MC.latchTOS | MC.EndOfCommand),
     Opcode.POP: (MC.latchAR | MC.ARmuxBUF, MC.memWRITE | MC.dsPOP | MC.EndOfCommand),
+    Opcode.PUSH_BY: (MC.aluLEFT | MC.aluNOP, MC.latchAR | MC.ARmuxBUF, MC.memREAD | MC.latchTOS | MC.EndOfCommand),
+    Opcode.POP_BY: (MC.aluLEFT | MC.aluNOP | MC.dsPOP, MC.latchAR | MC.ARmuxBUF, MC.memWRITE | MC.dsPOP | MC.EndOfCommand),
     Opcode.ADD: (MC.aluRIGHT | MC.dsPOP, MC.aluLEFT | MC.aluADD | MC.latchTOS | MC.EndOfCommand),
     Opcode.SUB: (MC.aluRIGHT | MC.dsPOP, MC.aluLEFT | MC.aluSUB | MC.latchTOS | MC.EndOfCommand),
     Opcode.MUL: (MC.aluRIGHT | MC.dsPOP, MC.aluLEFT | MC.aluMUL | MC.latchTOS | MC.EndOfCommand),
@@ -23,7 +25,8 @@ instructions: dict[Opcode: tuple[int]] = {
     Opcode.JN: (MC.BRANCH | MC.jnBRANCH | MC.EndOfCommand,),
     Opcode.CALL: (MC.BRANCH | MC.pushSTATE | MC.EndOfCommand,),
     Opcode.RET: (MC.BRANCH | MC.popSTATE | MC.EndOfCommand,),
-
+    Opcode.IN: (MC.dsPUSH | MC.IN, MC.latchTOS | MC.EndOfCommand),
+    Opcode.OUT: (MC.OUT, MC.dsPOP | MC.EndOfCommand),
 }
 
 class ControlUnit:
@@ -90,6 +93,11 @@ class ControlUnit:
             self.datapath.sig_memREAD()
         if self.microcommand & MC.memWRITE:
             self.datapath.sig_memWRITE()
+
+        if self.microcommand & MC.IN:
+            self.datapath.sig_IN()
+        if self.microcommand & MC.OUT:
+            self.datapath.sig_OUT()
 
         if self.microcommand & MC.latchTOS:
             self.datapath.sig_latchTOS()

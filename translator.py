@@ -34,8 +34,11 @@ def translate_stage_1(text: str):
                     if re.fullmatch(r'".*"', arg):
                         # Строку сохраняем посимвольно
                         output.extend(ord(x) for x in arg.strip('"'))
-                    else:
+                    elif re.fullmatch(r'0x[\da-fA-F]+|-?\d+', arg):
+                        # Численный литерал
                         output.append(int(arg, 0))
+                    else: # Метка
+                        output.append(arg)
                 args = output
                 opcode = Opcode._MEM
                 pc_diff = len(output)
@@ -57,7 +60,7 @@ def translate_stage_2(labels, code):
     for instruction in code:
         args = instruction["args"]
         for i in range(len(args)):
-            if instruction["opcode"] == Opcode._MEM:
+            if isinstance(args[i], int):
                 continue
 
             if re.fullmatch(r'[a-zA-Z_]+', args[i]):
@@ -65,8 +68,11 @@ def translate_stage_2(labels, code):
                 assert args[i] in labels, f"Label not defined: {args[i]}"
                 args[i] = labels[args[i]]
             else:
-                # Если это литерал
+                # Если это литерал - 31-й бит показывает прямую загрузку аргумента вместо обращения к памяти
                 assert re.fullmatch(r'0x[\da-fA-F]+|-?\d+', args[i]), f"Unknown type of argument: {args[i]}"
+                args[i] = (1 << 31) | (int(args[i], 0) & 0x7FFFFFFF)
+
+
     return startpos, code
 
 

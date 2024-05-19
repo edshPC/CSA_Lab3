@@ -16,6 +16,7 @@ def simulation(program, input_tokens, limit=10000, **kwargs):
         pass
     except SystemExit:
         print("Halted")
+    print("Output:", "".join(datapath.output_buf))
 
 def main(program_file, input_file = None):
     program = read_program(program_file)

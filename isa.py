@@ -12,6 +12,8 @@ class Opcode(str, Enum):
     HLT = "hlt"
     PUSH = "push"
     POP = "pop"
+    PUSH_BY = "push_by"
+    POP_BY = "pop_by"
 
     ADD = "add"
     SUB = "sub"
@@ -28,6 +30,8 @@ class Opcode(str, Enum):
     JN = "jn"
     CALL = "call"
     RET = "ret"
+    IN = "in"
+    OUT = "out"
 
     # Оператор загрузки литералов в память, не может быть вызван из программы
     _MEM = "mem"
@@ -45,6 +49,8 @@ class Opcode(str, Enum):
             self.JZ: (1, 1),
             self.JN: (1, 1),
             self.CALL: (1, 1),
+            self.IN: (1, 1),
+            self.OUT: (1, 1),
 
             self._MEM: (-1, -1)
         }.get(self, (0, 0))
@@ -63,7 +69,7 @@ class MC(int, Enum):
     NOP = 0
     EndOfCommand = autoshift()
 
-    # Вентили
+    # Защелки
     latchTOS = autoshift()
     latchPC = autoshift()
     latchMPC = autoshift()
@@ -100,8 +106,9 @@ class MC(int, Enum):
     pushSTATE = autoshift()
     popSTATE = autoshift()
 
+    IN = autoshift()
+    OUT = autoshift()
     HLT = autoshift()
-
 
 assert counter < 64, "Microcommand word is above 64 bit"
 
