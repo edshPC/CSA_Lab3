@@ -4,7 +4,7 @@ import sys
 import re
 
 
-def get_meaningful(text):
+def get_meaningful(text: str):
     # Удаляем из текста лишние отступы и комментарии
     return re.sub(r'^\s+|\s*;.*', '', text, flags=re.MULTILINE)
 
@@ -16,7 +16,8 @@ def translate_stage_1(text: str):
 
     for token in text.splitlines():
         token = token.strip()
-
+        if len(token) == 0:
+            continue
         if token.endswith(":"):  # токен содержит метку
             label = token.strip(":")
             assert label not in labels, f"Redefinition of label: {label}"

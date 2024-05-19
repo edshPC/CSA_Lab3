@@ -24,7 +24,6 @@ def main(program_file, input_file = None):
     if input_file is not None:
         with open(input_file, "r", encoding="utf-8") as file:
             input_tokens = [c for c in file.read()]
-    print(input_tokens)
 
     simulation(program, input_tokens)
 
