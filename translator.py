@@ -4,12 +4,12 @@ import sys
 import re
 
 
-def get_meaningful(text: str):
+def get_meaningful(text: str) -> str:
     # Удаляем из текста лишние отступы и комментарии
     return re.sub(r'^\s+|\s*;.*', '', text, flags=re.MULTILINE)
 
 
-def translate_stage_1(text: str):
+def translate_stage_1(text: str) -> tuple[dict, list[dict]]:
     code = []
     labels = {}
     pc = 1
@@ -55,7 +55,7 @@ def translate_stage_1(text: str):
     return labels, code
 
 
-def translate_stage_2(labels, code):
+def translate_stage_2(labels: dict[str, int], code: list[dict]) -> tuple[int, list[dict]]:
     assert "_start" in labels, "Can't find '_start' label"
     startpos = labels["_start"]
     for instruction in code:
@@ -77,14 +77,14 @@ def translate_stage_2(labels, code):
     return startpos, code
 
 
-def translate(text):
+def translate(text: str) -> dict:
     text = get_meaningful(text)  # Удаление комментариев и пустых строк
     labels, code = translate_stage_1(text)
     startpos, code = translate_stage_2(labels, code)
     return {"start": startpos, "code": code}
 
 
-def main(source, target):
+def main(source: str, target: str):
     with open(source, encoding="utf-8") as f:
         source = f.read()
 

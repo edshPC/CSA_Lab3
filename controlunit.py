@@ -4,7 +4,7 @@ from isa import *
 
 # Сборка машинных команд через микрокод.
 # Каждый элемент - кортеж микрокоманд, каждый элемент кортежа задает 1 такт
-instructions: dict[Opcode: tuple[int]] = {
+instructions: dict[Opcode, tuple[int]] = {
     Opcode.NOP: (MC.EndOfCommand,),
     Opcode.HLT: (MC.HLT,),
     Opcode.PUSH: (MC.latchAR | MC.ARmuxBUF | MC.dsPUSH, MC.memREAD | MC.latchTOS | MC.EndOfCommand),
@@ -34,7 +34,7 @@ class ControlUnit:
     microcommand_pc = 1  # pc микрокоманд
     microcommand = 0  # Текущая микрокоманда
     # Память микрокоманд (инициализирована с нуля NOP-om и выборкой инструкции)
-    microcommand_mem = [
+    microcommand_mem: list[int] = [
         MC.EndOfCommand, # NOP
         MC.ARmuxPC | MC.latchAR, # Instr fetch
         MC.memREAD | MC.latchMPC
@@ -50,7 +50,7 @@ class ControlUnit:
             self.microcommand_mem.extend(instructions[opcode])
 
 
-    def tick(self):
+    def tick(self) -> int:
         self.microcommand = self.microcommand_mem[self.microcommand_pc]
         self.microcommand_pc += 1
 

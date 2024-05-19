@@ -3,7 +3,7 @@ from datapath import DataPath
 from controlunit import ControlUnit
 from isa import read_program
 
-def simulation(program, input_tokens, limit=10000, **kwargs):
+def simulation(program: dict, input_tokens: list, limit=10000, **kwargs):
     datapath = DataPath(input_tokens, **kwargs)
     controluint = ControlUnit(program["start"], datapath, **kwargs)
     datapath.load_program(program["code"])
@@ -18,7 +18,7 @@ def simulation(program, input_tokens, limit=10000, **kwargs):
         print("Halted")
     print("Output:", "".join(datapath.output_buf))
 
-def main(program_file, input_file = None):
+def main(program_file: str, input_file: str = None):
     program = read_program(program_file)
     input_tokens = []
     if input_file is not None:

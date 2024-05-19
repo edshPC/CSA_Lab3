@@ -11,11 +11,11 @@ class IOController:
         1: [], # IN-unit
         2: []  # OUT-unit
     }
-    def sig_IN(self, port):
+    def sig_IN(self, port: int) -> int:
         if len(self.units[port]) == 0:
             raise EOFError
         return ord(self.units[port].pop(0))
-    def sig_OUT(self, port, value):
+    def sig_OUT(self, port: int, value: int):
         self.units[port].append(chr(value))
 
 class DataPath:
@@ -28,7 +28,7 @@ class DataPath:
     input_buf = io_controller.units[1]
     output_buf = io_controller.units[2]
 
-    def __init__(self, input_buf: list, memory_size: int = 2 ** 16, ds_size: int = 2 ** 10):
+    def __init__(self, input_buf: list[str], memory_size: int = 2 ** 16, ds_size: int = 2 ** 10):
         self.data_stack = Stack(maxlen=ds_size)
         self.memory_size = memory_size
         self.memory = [0] * memory_size

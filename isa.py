@@ -113,13 +113,13 @@ class MC(int, Enum):
 assert counter < 64, "Microcommand word is above 64 bit"
 
 
-def write_program(filename, program):
+def write_program(filename: str, program: dict):
     with open(filename, "w", encoding="utf-8") as file:
         file.write(
             re.sub(r'(\{.*?\},)', r'\1\n', json.dumps(program))
         )
 
-def read_program(filename):
+def read_program(filename: str) -> dict:
     with open(filename, "r", encoding="utf-8") as file:
         program = json.loads(file.read())
     for instr in program["code"]:
