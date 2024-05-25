@@ -19,7 +19,7 @@ class IOController:
         self.units[port].append(chr(value))
 
 class DataPath:
-    instruction_micro_address = {}  # Адрес нахождения инструкций в памяти микрокоманд
+    instruction_micro_address = {}  # Адреса нахождения инструкций в памяти микрокоманд
     address_reg = 0
     buffer = 0
     alu = ALU()
@@ -28,7 +28,7 @@ class DataPath:
     input_buf = io_controller.units[1]
     output_buf = io_controller.units[2]
 
-    def __init__(self, input_buf: list[str], memory_size: int = 2 ** 16, ds_size: int = 2 ** 10):
+    def __init__(self, input_buf: list[str], memory_size: int = 2 ** 16, ds_size: int = 2 ** 8, **_):
         self.data_stack = Stack(maxlen=ds_size)
         self.memory_size = memory_size
         self.memory = [0] * memory_size
@@ -45,14 +45,14 @@ class DataPath:
                 continue
             # Старшие 32 бита - адрес микрокода инструкции, младшие - аргумент
             self.memory[idx] = self.instruction_micro_address.get(opcode, 0) << 32
-            if len(args) == 1: # Есть аргумент
-                self.memory[idx] |= args[0]
+            for arg in args: # Применение аргументов в младшие 32 бита
+                self.memory[idx] |= arg & 0xFFFFFFFF
 
     @property
-    def flag_zero(self):
+    def flag_zero(self) -> bool:
         return self.data_stack.top == 0
     @property
-    def flag_negative(self):
+    def flag_negative(self) -> bool:
         return self.data_stack.top < 0
 
     def sig_dsPUSH(self):
@@ -74,13 +74,13 @@ class DataPath:
         if self.address_reg & (1 << 31): # Прямая загрузка
             self.buffer = extend_bits(self.address_reg)
         else:
-            self.buffer = self.memory[self.address_reg]
+            self.buffer = self.memory[self.address_reg % self.memory_size]
 
     def sig_memWRITE(self):
         if not self.address_reg: # NULL
             return
         assert self.address_reg & (1 << 31) == 0, "Cannot access memory by address, use labels"
-        self.memory[self.address_reg] = self.data_stack.top
+        self.memory[self.address_reg % self.memory_size] = self.data_stack.top
 
     def sig_aluLEFT(self):
         self.alu.left = self.data_stack.top

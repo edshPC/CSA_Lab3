@@ -40,7 +40,7 @@ class ControlUnit:
         MC.memREAD | MC.latchMPC
     ]
 
-    def __init__(self, startpos: int, datapath: DataPath, rs_size: int = 2 ** 8):
+    def __init__(self, startpos: int, datapath: DataPath, rs_size: int = 2 ** 8, **_):
         self.ret_stack = Stack(maxlen=rs_size)
         self.pc = startpos
         self.datapath = datapath
@@ -111,7 +111,6 @@ class ControlUnit:
         if self.microcommand & MC.BRANCH:
             self.sig_BRANCH()
 
-        print(self._tick, self.pc, self.datapath.data_stack)
         self._tick += 1
         return self._tick
 
@@ -135,4 +134,10 @@ class ControlUnit:
         if jump:
             self.pc = self.datapath.buffer & 0x7FFFFFFF
 
+    def __repr__(self):
+        return f"""\
+ Tick: {self._tick} \tmPC: {hex(self.microcommand_pc)} \tPC: {hex(self.pc)} \tBUF: {hex(self.datapath.buffer)} \tAR: {hex(self.datapath.address_reg)} \tMC: {hex(self.microcommand)}
+ \tData{self.datapath.data_stack}
+ \tRet{self.ret_stack}\
+"""
 

@@ -7,14 +7,19 @@ class Stack(deque):
 
     @property
     def top(self):
+        assert self.size() > 0, "StackUnderflow"
         return self[-1]
 
     @top.setter
     def top(self, value):
+        assert self.size() > 0, "StackUnderflow"
         self[-1] = value
 
     def size(self):
         return len(self)
+
+    def __repr__(self):
+        return f'Stack[{", ".join(str(x) for x in self)} <-]'
 
 # Расширяет 31-битное число, если отрицательно
 def extend_bits(num_31bit: int) -> int:
