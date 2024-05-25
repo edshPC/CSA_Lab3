@@ -1,0 +1,30 @@
+in_source: |-
+  ; Cat
+  _start:
+  in:
+      in 1 ; symbol
+      dup ; symbol, symbol
+      push 0xA ; symbol, symbol, '\n'
+      sub ; symbol, symbol-'\n'
+      jz exit
+      pop ; symbol
+      out 2 ; -
+      jmp in
+  exit:
+      hlt
+in_stdin: |-
+  foo
+out_code: |-
+  [{"index": 0, "opcode": "input", "term": [6, 0, "input"]},
+   {"index": 1, "opcode": "jz", "arg": 5, "term": [8, 0, "jz break"]},
+   {"index": 2, "opcode": "print", "term": [9, 0, "print"]},
+   {"index": 3, "opcode": "input", "term": [10, 0, "input"]},
+   {"index": 4, "opcode": "jmp", "arg": 1, "term": [11, 0, "jmp loop"]},
+   {"index": 5, "opcode": "halt", "term": [13, 0, "halt"]}]
+out_stdout: |
+  source LoC: 13 code instr: 6
+  ============================================================
+  foo
+  instr_counter:  11 ticks: 21
+out_log: |
+  a
