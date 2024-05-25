@@ -1,3 +1,5 @@
+import logging
+
 from util import *
 from isa import *
 
@@ -14,9 +16,13 @@ class IOController:
     def sig_IN(self, port: int) -> int:
         if len(self.units[port]) == 0:
             raise EOFError
-        return ord(self.units[port].pop(0))
+        symbol = self.units[port].pop(0)
+        logging.debug("input: %s", repr(symbol))
+        return ord(symbol)
     def sig_OUT(self, port: int, value: int):
-        self.units[port].append(chr(value))
+        symbol = chr(value)
+        logging.debug("output: %s << %s", repr("".join(self.units[port])), repr(symbol))
+        self.units[port].append(symbol)
 
 class DataPath:
     instruction_micro_address = {}  # Адреса нахождения инструкций в памяти микрокоманд
