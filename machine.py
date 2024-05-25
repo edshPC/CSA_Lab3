@@ -44,6 +44,7 @@ def main(program_file: str, input_file: str = None):
 
 if __name__ == "__main__":
     logging.getLogger().setLevel(logging.DEBUG)
+    logging.basicConfig(format="%(levelname)-7s %(module)s:%(funcName)-13s %(message)s")
     assert 2 <= len(sys.argv) <= 3, "Wrong arguments: machine.py <program_file> [<input_file>]"
     _, program_file, *input_file = sys.argv
     main(program_file, *input_file)
