@@ -1,7 +1,8 @@
-import sys
 import logging
-from datapath import DataPath
+import sys
+
 from controlunit import ControlUnit
+from datapath import DataPath
 from isa import read_program
 
 
@@ -20,19 +21,19 @@ def simulation(program: dict, input_tokens: list, tick_limit=10000, **kwargs):
         logging.warning("Try to read empty iuput buffer!")
     except AssertionError as e:
         logging.warning("Program interrupted: %s", e)
-    except Exception as e:
-        logging.error("Unexpected error: %s", e)
+    except Exception:
+        logging.exception("Unexpected error: %s")
 
     logging.info("Output: %s", "".join(datapath.output_buf))
     print("".join(datapath.output_buf))
     print("Ticks:", controluint._tick)
 
 
-def main(program_file: str, input_file: str = None):
+def main(program_file, input_file=None):
     program = read_program(program_file)
     input_tokens = []
     if input_file is not None:
-        with open(input_file, "r", encoding="utf-8") as file:
+        with open(input_file, encoding="utf-8") as file:
             input_tokens = [c for c in file.read()]
 
     simulation(program, input_tokens, tick_limit=2**16, memory_size=2**16, ds_size=2**8, rs_size=2**8)

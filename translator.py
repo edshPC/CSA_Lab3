@@ -1,12 +1,43 @@
-from isa import *
+from __future__ import annotations
 
-import sys
 import re
+import sys
+
+from isa import Opcode, write_program
 
 
 def get_meaningful(text: str) -> str:
     # Удаляем из текста лишние отступы и комментарии
     return re.sub(r"^\s+|\s*;.*", "", text, flags=re.MULTILINE)
+
+
+def handle_instruction(token: str):
+    mnemonic, *args = re.findall(r'(?:"[^"]*"|[^,\s])+', token)  # разделение по пробелу не в кавычках
+    opcode = Opcode(mnemonic.lower())
+    a, b = opcode.arg_count
+    assert a <= len(args) <= b, f"Invalid number of args for '{mnemonic}': Expected [{a};{b}], got {len(args)}"
+
+    pc_diff = 1
+    if opcode == Opcode.WORD or opcode == Opcode.DB:  # Команда сохранения константы
+        output = []
+        for arg in args:
+            if re.fullmatch(r'".*"', arg):
+                # Строку сохраняем посимвольно
+                output.extend(ord(x) for x in arg.strip('"'))
+            elif re.fullmatch(r"0x[\da-fA-F]+|-?\d+", arg):
+                # Численный литерал
+                output.append(int(arg, 0))
+            else:  # Метка
+                output.append(arg)
+        args = output
+        opcode = Opcode._MEM
+        pc_diff = len(output)
+    elif opcode == Opcode.RESW:
+        pc_diff = int(args[0], 0)
+        assert pc_diff > 0, "Cannot reserve negative space"
+        args = []
+        opcode = Opcode._MEM
+    return pc_diff, opcode, args
 
 
 def translate_stage_1(text: str) -> tuple[dict, list[dict]]:
@@ -23,32 +54,7 @@ def translate_stage_1(text: str) -> tuple[dict, list[dict]]:
             assert label not in labels, f"Redefinition of label: {label}"
             labels[label] = pc
         else:  # токен содержит инструкцию
-            mnemonic, *args = re.findall(r'(?:"[^"]*"|[^,\s])+', token)  # разделение по пробелу не в кавычках
-            opcode = Opcode(mnemonic.lower())
-            a, b = opcode.arg_count
-            assert a <= len(args) <= b, f"Invalid number of args for '{mnemonic}': Expected [{a};{b}], got {len(args)}"
-
-            pc_diff = 1
-            if opcode == Opcode.WORD or opcode == Opcode.DB:  # Команда сохранения константы
-                output = []
-                for arg in args:
-                    if re.fullmatch(r'".*"', arg):
-                        # Строку сохраняем посимвольно
-                        output.extend(ord(x) for x in arg.strip('"'))
-                    elif re.fullmatch(r"0x[\da-fA-F]+|-?\d+", arg):
-                        # Численный литерал
-                        output.append(int(arg, 0))
-                    else:  # Метка
-                        output.append(arg)
-                args = output
-                opcode = Opcode._MEM
-                pc_diff = len(output)
-            elif opcode == Opcode.RESW:
-                pc_diff = int(args[0], 0)
-                assert pc_diff > 0, "Cannot reserve negative space"
-                args = []
-                opcode = Opcode._MEM
-
+            pc_diff, opcode, args = handle_instruction(token)
             code.append({"index": pc, "opcode": opcode, "args": args})
             pc += pc_diff
     code.append({"index": pc, "opcode": Opcode.HLT, "args": []})  # HLT в конце программы

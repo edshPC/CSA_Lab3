@@ -1,6 +1,6 @@
 import json
-from enum import Enum
 import re
+from enum import Enum
 
 
 class Opcode(str, Enum):
@@ -72,41 +72,41 @@ class MC(int, Enum):
     EndOfCommand = autoshift()
 
     # Защелки
-    latchTOS = autoshift()
-    latchPC = autoshift()
-    latchMPC = autoshift()
-    latchAR = autoshift()
+    latch_tos = autoshift()
+    latch_pc = autoshift()
+    latch_mpc = autoshift()
+    latch_ar = autoshift()
 
     # Мультиплексоры
     ARmuxPC = autoshift()
     ARmuxBUF = autoshift()
 
     # Операции со стеком
-    dsPUSH = autoshift()
-    dsPOP = autoshift()
+    ds_push = autoshift()
+    ds_pop = autoshift()
     # Операции с памятью
-    memREAD = autoshift()
-    memWRITE = autoshift()
+    mem_read = autoshift()
+    mem_write = autoshift()
 
     # ALU
-    aluLEFT = autoshift()
-    aluRIGHT = autoshift()
-    aluADD = autoshift()
-    aluSUB = autoshift()
-    aluMUL = autoshift()
-    aluDIV = autoshift()
-    aluMOD = autoshift()
-    aluNOP = autoshift()
-    aluNEG = autoshift()
-    aluINC = autoshift()
-    aluDEC = autoshift()
+    alu_left = autoshift()
+    alu_right = autoshift()
+    alu_add = autoshift()
+    alu_sub = autoshift()
+    alu_mul = autoshift()
+    alu_div = autoshift()
+    alu_mod = autoshift()
+    alu_nop = autoshift()
+    alu_neg = autoshift()
+    alu_inc = autoshift()
+    alu_dec = autoshift()
 
     # Ветвление
     BRANCH = autoshift()
-    jzBRANCH = autoshift()
-    jnBRANCH = autoshift()
-    pushSTATE = autoshift()
-    popSTATE = autoshift()
+    jz_branch = autoshift()
+    jn_branch = autoshift()
+    push_state = autoshift()
+    pop_state = autoshift()
 
     IN = autoshift()
     OUT = autoshift()
@@ -118,11 +118,11 @@ assert counter < 64, "Microcommand word is above 64 bit"
 
 def write_program(filename: str, program: dict):
     with open(filename, "w", encoding="utf-8") as file:
-        file.write(re.sub(r"(\{.*?\},)", r"\1\n", json.dumps(program)))
+        file.write(re.sub(r"(\{.*?},)", r"\1\n", json.dumps(program)))
 
 
 def read_program(filename: str) -> dict:
-    with open(filename, "r", encoding="utf-8") as file:
+    with open(filename, encoding="utf-8") as file:
         program = json.loads(file.read())
     for instr in program["code"]:
         instr["opcode"] = Opcode(instr["opcode"])

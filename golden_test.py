@@ -4,9 +4,9 @@ import logging
 import os
 import tempfile
 
+import machine
 import pytest
-
-import translator, machine
+import translator
 
 
 @pytest.mark.golden_test("golden/*.yml")

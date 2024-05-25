@@ -1,49 +1,52 @@
-from datapath import *
-from isa import *
+from __future__ import annotations
 
+from datapath import DataPath
+from isa import MC, Opcode
+from util import Stack
 
 # Сборка машинных команд через микрокод.
 # Каждый элемент - кортеж микрокоманд, каждый элемент кортежа задает 1 такт
 instructions: dict[Opcode, tuple[int]] = {
     Opcode.NOP: (MC.EndOfCommand,),
     Opcode.HLT: (MC.HLT,),
-    Opcode.PUSH: (MC.latchAR | MC.ARmuxBUF | MC.dsPUSH, MC.memREAD | MC.latchTOS | MC.EndOfCommand),
-    Opcode.POP: (MC.latchAR | MC.ARmuxBUF, MC.memWRITE | MC.dsPOP | MC.EndOfCommand),
-    Opcode.PUSH_BY: (MC.aluLEFT | MC.aluNOP, MC.latchAR | MC.ARmuxBUF, MC.memREAD | MC.latchTOS | MC.EndOfCommand),
+    Opcode.PUSH: (MC.latch_ar | MC.ARmuxBUF | MC.ds_push, MC.mem_read | MC.latch_tos | MC.EndOfCommand),
+    Opcode.POP: (MC.latch_ar | MC.ARmuxBUF, MC.mem_write | MC.ds_pop | MC.EndOfCommand),
+    Opcode.PUSH_BY: (MC.alu_left | MC.alu_nop, MC.latch_ar | MC.ARmuxBUF, MC.mem_read | MC.latch_tos | MC.EndOfCommand),
     Opcode.POP_BY: (
-        MC.aluLEFT | MC.aluNOP | MC.dsPOP,
-        MC.latchAR | MC.ARmuxBUF,
-        MC.memWRITE | MC.dsPOP | MC.EndOfCommand,
+        MC.alu_left | MC.alu_nop | MC.ds_pop,
+        MC.latch_ar | MC.ARmuxBUF,
+        MC.mem_write | MC.ds_pop | MC.EndOfCommand,
     ),
-    Opcode.ADD: (MC.aluRIGHT | MC.dsPOP, MC.aluLEFT | MC.aluADD | MC.latchTOS | MC.EndOfCommand),
-    Opcode.SUB: (MC.aluRIGHT | MC.dsPOP, MC.aluLEFT | MC.aluSUB | MC.latchTOS | MC.EndOfCommand),
-    Opcode.MUL: (MC.aluRIGHT | MC.dsPOP, MC.aluLEFT | MC.aluMUL | MC.latchTOS | MC.EndOfCommand),
-    Opcode.DIV: (MC.aluRIGHT | MC.dsPOP, MC.aluLEFT | MC.aluDIV | MC.latchTOS | MC.EndOfCommand),
-    Opcode.MOD: (MC.aluRIGHT | MC.dsPOP, MC.aluLEFT | MC.aluMOD | MC.latchTOS | MC.EndOfCommand),
-    Opcode.NEG: (MC.aluLEFT | MC.aluNEG | MC.aluNOP, MC.latchTOS | MC.EndOfCommand),
-    Opcode.INC: (MC.aluLEFT | MC.aluINC | MC.aluNOP, MC.latchTOS | MC.EndOfCommand),
-    Opcode.DEC: (MC.aluLEFT | MC.aluDEC | MC.aluNOP, MC.latchTOS | MC.EndOfCommand),
-    Opcode.DUP: (MC.aluLEFT | MC.aluNOP | MC.dsPUSH, MC.latchTOS | MC.EndOfCommand),
+    Opcode.ADD: (MC.alu_right | MC.ds_pop, MC.alu_left | MC.alu_add | MC.latch_tos | MC.EndOfCommand),
+    Opcode.SUB: (MC.alu_right | MC.ds_pop, MC.alu_left | MC.alu_sub | MC.latch_tos | MC.EndOfCommand),
+    Opcode.MUL: (MC.alu_right | MC.ds_pop, MC.alu_left | MC.alu_mul | MC.latch_tos | MC.EndOfCommand),
+    Opcode.DIV: (MC.alu_right | MC.ds_pop, MC.alu_left | MC.alu_div | MC.latch_tos | MC.EndOfCommand),
+    Opcode.MOD: (MC.alu_right | MC.ds_pop, MC.alu_left | MC.alu_mod | MC.latch_tos | MC.EndOfCommand),
+    Opcode.NEG: (MC.alu_left | MC.alu_neg | MC.alu_nop, MC.latch_tos | MC.EndOfCommand),
+    Opcode.INC: (MC.alu_left | MC.alu_inc | MC.alu_nop, MC.latch_tos | MC.EndOfCommand),
+    Opcode.DEC: (MC.alu_left | MC.alu_dec | MC.alu_nop, MC.latch_tos | MC.EndOfCommand),
+    Opcode.DUP: (MC.alu_left | MC.alu_nop | MC.ds_push, MC.latch_tos | MC.EndOfCommand),
     Opcode.JMP: (MC.BRANCH | MC.EndOfCommand,),
-    Opcode.JZ: (MC.BRANCH | MC.jzBRANCH | MC.EndOfCommand,),
-    Opcode.JN: (MC.BRANCH | MC.jnBRANCH | MC.EndOfCommand,),
-    Opcode.CALL: (MC.BRANCH | MC.pushSTATE | MC.EndOfCommand,),
-    Opcode.RET: (MC.BRANCH | MC.popSTATE | MC.EndOfCommand,),
-    Opcode.IN: (MC.dsPUSH | MC.IN, MC.latchTOS | MC.EndOfCommand),
-    Opcode.OUT: (MC.OUT, MC.dsPOP | MC.EndOfCommand),
+    Opcode.JZ: (MC.BRANCH | MC.jz_branch | MC.EndOfCommand,),
+    Opcode.JN: (MC.BRANCH | MC.jn_branch | MC.EndOfCommand,),
+    Opcode.CALL: (MC.BRANCH | MC.push_state | MC.EndOfCommand,),
+    Opcode.RET: (MC.BRANCH | MC.pop_state | MC.EndOfCommand,),
+    Opcode.IN: (MC.ds_push | MC.IN, MC.latch_tos | MC.EndOfCommand),
+    Opcode.OUT: (MC.OUT, MC.ds_pop | MC.EndOfCommand),
 }
+
+# Инициализация памяти микрокоманд (инициализирована с нуля NOP-om и выборкой инструкции)
+microcommand_init: list[int] = [
+    MC.EndOfCommand,  # NOP
+    MC.ARmuxPC | MC.latch_ar,  # Instr fetch
+    MC.mem_read | MC.latch_mpc,
+]
 
 
 class ControlUnit:
     _tick = 0  # Текущий такт
     microcommand_pc = 1  # pc микрокоманд
     microcommand = 0  # Текущая микрокоманда
-    # Память микрокоманд (инициализирована с нуля NOP-om и выборкой инструкции)
-    microcommand_mem: list[int] = [
-        MC.EndOfCommand,  # NOP
-        MC.ARmuxPC | MC.latchAR,  # Instr fetch
-        MC.memREAD | MC.latchMPC,
-    ]
 
     def __init__(self, startpos: int, datapath: DataPath, rs_size: int = 2**8, **_):
         self.ret_stack = Stack(maxlen=rs_size)
@@ -51,10 +54,12 @@ class ControlUnit:
         self.datapath = datapath
         datapath.controlunit = self
         for opcode in instructions:  # Идём по списку инструкций
-            datapath.instruction_micro_address[opcode] = len(self.microcommand_mem)
-            self.microcommand_mem.extend(instructions[opcode])
+            datapath.instruction_micro_address[opcode] = len(microcommand_init)
+            microcommand_init.extend(instructions[opcode])
+        # Инициализация памяти микрокоманд
+        self.microcommand_mem = tuple(microcommand_init)
 
-    def tick(self) -> int:
+    def tick(self) -> int:  # noqa: C901 - Complexity низкая, if по порядку нужны для парсинга микрокода
         self.microcommand = self.microcommand_mem[self.microcommand_pc]
         self.microcommand_pc += 1
 
@@ -64,76 +69,76 @@ class ControlUnit:
             self.microcommand_pc = 1
             self.pc += 1
 
-        if self.microcommand & MC.latchAR:
-            self.datapath.sig_latchAR()
+        if self.microcommand & MC.latch_ar:
+            self.datapath.sig_latch_ar()
 
-        if self.microcommand & MC.aluLEFT:
-            self.datapath.sig_aluLEFT()
-        if self.microcommand & MC.aluRIGHT:
-            self.datapath.sig_aluRIGHT()
-        if self.microcommand & MC.aluNEG:
-            self.datapath.sig_aluNEG()
-        if self.microcommand & MC.aluINC:
-            self.datapath.sig_aluINC()
-        if self.microcommand & MC.aluDEC:
-            self.datapath.sig_aluDEC()
-        if self.microcommand & MC.aluADD:
-            self.datapath.sig_aluADD()
-        if self.microcommand & MC.aluSUB:
-            self.datapath.sig_aluSUB()
-        if self.microcommand & MC.aluMUL:
-            self.datapath.sig_aluMUL()
-        if self.microcommand & MC.aluDIV:
-            self.datapath.sig_aluDIV()
-        if self.microcommand & MC.aluMOD:
-            self.datapath.sig_aluMOD()
-        if self.microcommand & MC.aluNOP:
-            self.datapath.sig_aluNOP()
+        if self.microcommand & MC.alu_left:
+            self.datapath.sig_alu_left()
+        if self.microcommand & MC.alu_right:
+            self.datapath.sig_alu_right()
+        if self.microcommand & MC.alu_neg:
+            self.datapath.sig_alu_neg()
+        if self.microcommand & MC.alu_inc:
+            self.datapath.sig_alu_inc()
+        if self.microcommand & MC.alu_dec:
+            self.datapath.sig_alu_dec()
+        if self.microcommand & MC.alu_add:
+            self.datapath.sig_alu_add()
+        if self.microcommand & MC.alu_sub:
+            self.datapath.sig_alu_sub()
+        if self.microcommand & MC.alu_mul:
+            self.datapath.sig_alu_mul()
+        if self.microcommand & MC.alu_div:
+            self.datapath.sig_alu_div()
+        if self.microcommand & MC.alu_mod:
+            self.datapath.sig_alu_mod()
+        if self.microcommand & MC.alu_nop:
+            self.datapath.sig_alu_nop()
 
-        if self.microcommand & MC.dsPUSH:
-            self.datapath.sig_dsPUSH()
+        if self.microcommand & MC.ds_push:
+            self.datapath.sig_ds_push()
 
-        if self.microcommand & MC.memREAD:
-            self.datapath.sig_memREAD()
-        if self.microcommand & MC.memWRITE:
-            self.datapath.sig_memWRITE()
+        if self.microcommand & MC.mem_read:
+            self.datapath.sig_mem_read()
+        if self.microcommand & MC.mem_write:
+            self.datapath.sig_mem_write()
 
         if self.microcommand & MC.IN:
-            self.datapath.sig_IN()
+            self.datapath.sig_in()
         if self.microcommand & MC.OUT:
-            self.datapath.sig_OUT()
+            self.datapath.sig_out()
 
-        if self.microcommand & MC.latchTOS:
-            self.datapath.sig_latchTOS()
+        if self.microcommand & MC.latch_tos:
+            self.datapath.sig_latch_tos()
 
-        if self.microcommand & MC.latchMPC:
-            self.sig_latchMPC()
+        if self.microcommand & MC.latch_mpc:
+            self.sig_latch_mpc()
 
-        if self.microcommand & MC.dsPOP:
-            self.datapath.sig_dsPOP()
+        if self.microcommand & MC.ds_pop:
+            self.datapath.sig_ds_pop()
 
         if self.microcommand & MC.BRANCH:
-            self.sig_BRANCH()
+            self.sig_branch()
 
         self._tick += 1
         return self._tick
 
-    def sig_latchMPC(self):
+    def sig_latch_mpc(self):
         self.microcommand_pc = self.datapath.buffer >> 32
 
-    def sig_BRANCH(self):
+    def sig_branch(self):
         if not self.datapath.buffer:  # NULL
             return
         assert self.datapath.buffer & (1 << 31) == 0, "Cannot access memory by address, use labels"
-        if self.microcommand & MC.pushSTATE:
+        if self.microcommand & MC.push_state:
             self.ret_stack.push(self.pc)
-        if self.microcommand & MC.popSTATE:
+        if self.microcommand & MC.pop_state:
             self.datapath.buffer = self.ret_stack.pop()
 
         jump = True
-        if self.microcommand & MC.jzBRANCH:
+        if self.microcommand & MC.jz_branch:
             jump &= self.datapath.flag_zero
-        if self.microcommand & MC.jnBRANCH:
+        if self.microcommand & MC.jn_branch:
             jump &= self.datapath.flag_negative
         if jump:
             self.pc = self.datapath.buffer & 0x7FFFFFFF
