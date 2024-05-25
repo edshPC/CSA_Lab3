@@ -40,7 +40,7 @@ out_log: |
   DEBUG   machine:simulation     Tick: 2 	mPC: 0x26 	PC: 0x1 	BUF: 0x2680000001 	AR: 0x1 	MC: 0x410
    	DataStack[ <-]
    	RetStack[ <-]
-  DEBUG   datapath:sig_IN        input: 'H'
+  DEBUG   datapath:sig_in        input: 'H'
   DEBUG   machine:simulation     Tick: 3 	mPC: 0x27 	PC: 0x1 	BUF: 0x48 	AR: 0x1 	MC: 0x10000100
    	DataStack[0 <-]
    	RetStack[ <-]
@@ -110,7 +110,7 @@ out_log: |
   DEBUG   machine:simulation     Tick: 25 	mPC: 0x28 	PC: 0x7 	BUF: 0x2880000002 	AR: 0x7 	MC: 0x410
    	DataStack[72 <-]
    	RetStack[ <-]
-  DEBUG   datapath:sig_OUT       output: '' << 'H'
+  DEBUG   datapath:sig_out       output: '' << 'H'
   DEBUG   machine:simulation     Tick: 26 	mPC: 0x29 	PC: 0x7 	BUF: 0x2880000002 	AR: 0x7 	MC: 0x20000000
    	DataStack[72 <-]
    	RetStack[ <-]
@@ -132,7 +132,7 @@ out_log: |
   DEBUG   machine:simulation     Tick: 32 	mPC: 0x26 	PC: 0x1 	BUF: 0x2680000001 	AR: 0x1 	MC: 0x410
    	DataStack[ <-]
    	RetStack[ <-]
-  DEBUG   datapath:sig_IN        input: 'e'
+  DEBUG   datapath:sig_in        input: 'e'
   DEBUG   machine:simulation     Tick: 33 	mPC: 0x27 	PC: 0x1 	BUF: 0x65 	AR: 0x1 	MC: 0x10000100
    	DataStack[0 <-]
    	RetStack[ <-]
@@ -202,7 +202,7 @@ out_log: |
   DEBUG   machine:simulation     Tick: 55 	mPC: 0x28 	PC: 0x7 	BUF: 0x2880000002 	AR: 0x7 	MC: 0x410
    	DataStack[101 <-]
    	RetStack[ <-]
-  DEBUG   datapath:sig_OUT       output: 'H' << 'e'
+  DEBUG   datapath:sig_out       output: 'H' << 'e'
   DEBUG   machine:simulation     Tick: 56 	mPC: 0x29 	PC: 0x7 	BUF: 0x2880000002 	AR: 0x7 	MC: 0x20000000
    	DataStack[101 <-]
    	RetStack[ <-]
@@ -224,7 +224,7 @@ out_log: |
   DEBUG   machine:simulation     Tick: 62 	mPC: 0x26 	PC: 0x1 	BUF: 0x2680000001 	AR: 0x1 	MC: 0x410
    	DataStack[ <-]
    	RetStack[ <-]
-  DEBUG   datapath:sig_IN        input: 'l'
+  DEBUG   datapath:sig_in        input: 'l'
   DEBUG   machine:simulation     Tick: 63 	mPC: 0x27 	PC: 0x1 	BUF: 0x6c 	AR: 0x1 	MC: 0x10000100
    	DataStack[0 <-]
    	RetStack[ <-]
@@ -294,7 +294,7 @@ out_log: |
   DEBUG   machine:simulation     Tick: 85 	mPC: 0x28 	PC: 0x7 	BUF: 0x2880000002 	AR: 0x7 	MC: 0x410
    	DataStack[108 <-]
    	RetStack[ <-]
-  DEBUG   datapath:sig_OUT       output: 'He' << 'l'
+  DEBUG   datapath:sig_out       output: 'He' << 'l'
   DEBUG   machine:simulation     Tick: 86 	mPC: 0x29 	PC: 0x7 	BUF: 0x2880000002 	AR: 0x7 	MC: 0x20000000
    	DataStack[108 <-]
    	RetStack[ <-]
@@ -316,7 +316,7 @@ out_log: |
   DEBUG   machine:simulation     Tick: 92 	mPC: 0x26 	PC: 0x1 	BUF: 0x2680000001 	AR: 0x1 	MC: 0x410
    	DataStack[ <-]
    	RetStack[ <-]
-  DEBUG   datapath:sig_IN        input: 'l'
+  DEBUG   datapath:sig_in        input: 'l'
   DEBUG   machine:simulation     Tick: 93 	mPC: 0x27 	PC: 0x1 	BUF: 0x6c 	AR: 0x1 	MC: 0x10000100
    	DataStack[0 <-]
    	RetStack[ <-]
@@ -386,7 +386,7 @@ out_log: |
   DEBUG   machine:simulation     Tick: 115 	mPC: 0x28 	PC: 0x7 	BUF: 0x2880000002 	AR: 0x7 	MC: 0x410
    	DataStack[108 <-]
    	RetStack[ <-]
-  DEBUG   datapath:sig_OUT       output: 'Hel' << 'l'
+  DEBUG   datapath:sig_out       output: 'Hel' << 'l'
   DEBUG   machine:simulation     Tick: 116 	mPC: 0x29 	PC: 0x7 	BUF: 0x2880000002 	AR: 0x7 	MC: 0x20000000
    	DataStack[108 <-]
    	RetStack[ <-]
@@ -408,7 +408,7 @@ out_log: |
   DEBUG   machine:simulation     Tick: 122 	mPC: 0x26 	PC: 0x1 	BUF: 0x2680000001 	AR: 0x1 	MC: 0x410
    	DataStack[ <-]
    	RetStack[ <-]
-  DEBUG   datapath:sig_IN        input: 'o'
+  DEBUG   datapath:sig_in        input: 'o'
   DEBUG   machine:simulation     Tick: 123 	mPC: 0x27 	PC: 0x1 	BUF: 0x6f 	AR: 0x1 	MC: 0x10000100
    	DataStack[0 <-]
    	RetStack[ <-]
@@ -478,7 +478,7 @@ out_log: |
   DEBUG   machine:simulation     Tick: 145 	mPC: 0x28 	PC: 0x7 	BUF: 0x2880000002 	AR: 0x7 	MC: 0x410
    	DataStack[111 <-]
    	RetStack[ <-]
-  DEBUG   datapath:sig_OUT       output: 'Hell' << 'o'
+  DEBUG   datapath:sig_out       output: 'Hell' << 'o'
   DEBUG   machine:simulation     Tick: 146 	mPC: 0x29 	PC: 0x7 	BUF: 0x2880000002 	AR: 0x7 	MC: 0x20000000
    	DataStack[111 <-]
    	RetStack[ <-]
@@ -500,7 +500,7 @@ out_log: |
   DEBUG   machine:simulation     Tick: 152 	mPC: 0x26 	PC: 0x1 	BUF: 0x2680000001 	AR: 0x1 	MC: 0x410
    	DataStack[ <-]
    	RetStack[ <-]
-  DEBUG   datapath:sig_IN        input: ','
+  DEBUG   datapath:sig_in        input: ','
   DEBUG   machine:simulation     Tick: 153 	mPC: 0x27 	PC: 0x1 	BUF: 0x2c 	AR: 0x1 	MC: 0x10000100
    	DataStack[0 <-]
    	RetStack[ <-]
@@ -570,7 +570,7 @@ out_log: |
   DEBUG   machine:simulation     Tick: 175 	mPC: 0x28 	PC: 0x7 	BUF: 0x2880000002 	AR: 0x7 	MC: 0x410
    	DataStack[44 <-]
    	RetStack[ <-]
-  DEBUG   datapath:sig_OUT       output: 'Hello' << ','
+  DEBUG   datapath:sig_out       output: 'Hello' << ','
   DEBUG   machine:simulation     Tick: 176 	mPC: 0x29 	PC: 0x7 	BUF: 0x2880000002 	AR: 0x7 	MC: 0x20000000
    	DataStack[44 <-]
    	RetStack[ <-]
@@ -592,7 +592,7 @@ out_log: |
   DEBUG   machine:simulation     Tick: 182 	mPC: 0x26 	PC: 0x1 	BUF: 0x2680000001 	AR: 0x1 	MC: 0x410
    	DataStack[ <-]
    	RetStack[ <-]
-  DEBUG   datapath:sig_IN        input: ' '
+  DEBUG   datapath:sig_in        input: ' '
   DEBUG   machine:simulation     Tick: 183 	mPC: 0x27 	PC: 0x1 	BUF: 0x20 	AR: 0x1 	MC: 0x10000100
    	DataStack[0 <-]
    	RetStack[ <-]
@@ -662,7 +662,7 @@ out_log: |
   DEBUG   machine:simulation     Tick: 205 	mPC: 0x28 	PC: 0x7 	BUF: 0x2880000002 	AR: 0x7 	MC: 0x410
    	DataStack[32 <-]
    	RetStack[ <-]
-  DEBUG   datapath:sig_OUT       output: 'Hello,' << ' '
+  DEBUG   datapath:sig_out       output: 'Hello,' << ' '
   DEBUG   machine:simulation     Tick: 206 	mPC: 0x29 	PC: 0x7 	BUF: 0x2880000002 	AR: 0x7 	MC: 0x20000000
    	DataStack[32 <-]
    	RetStack[ <-]
@@ -684,7 +684,7 @@ out_log: |
   DEBUG   machine:simulation     Tick: 212 	mPC: 0x26 	PC: 0x1 	BUF: 0x2680000001 	AR: 0x1 	MC: 0x410
    	DataStack[ <-]
    	RetStack[ <-]
-  DEBUG   datapath:sig_IN        input: 'c'
+  DEBUG   datapath:sig_in        input: 'c'
   DEBUG   machine:simulation     Tick: 213 	mPC: 0x27 	PC: 0x1 	BUF: 0x63 	AR: 0x1 	MC: 0x10000100
    	DataStack[0 <-]
    	RetStack[ <-]
@@ -754,7 +754,7 @@ out_log: |
   DEBUG   machine:simulation     Tick: 235 	mPC: 0x28 	PC: 0x7 	BUF: 0x2880000002 	AR: 0x7 	MC: 0x410
    	DataStack[99 <-]
    	RetStack[ <-]
-  DEBUG   datapath:sig_OUT       output: 'Hello, ' << 'c'
+  DEBUG   datapath:sig_out       output: 'Hello, ' << 'c'
   DEBUG   machine:simulation     Tick: 236 	mPC: 0x29 	PC: 0x7 	BUF: 0x2880000002 	AR: 0x7 	MC: 0x20000000
    	DataStack[99 <-]
    	RetStack[ <-]
@@ -776,7 +776,7 @@ out_log: |
   DEBUG   machine:simulation     Tick: 242 	mPC: 0x26 	PC: 0x1 	BUF: 0x2680000001 	AR: 0x1 	MC: 0x410
    	DataStack[ <-]
    	RetStack[ <-]
-  DEBUG   datapath:sig_IN        input: 'a'
+  DEBUG   datapath:sig_in        input: 'a'
   DEBUG   machine:simulation     Tick: 243 	mPC: 0x27 	PC: 0x1 	BUF: 0x61 	AR: 0x1 	MC: 0x10000100
    	DataStack[0 <-]
    	RetStack[ <-]
@@ -846,7 +846,7 @@ out_log: |
   DEBUG   machine:simulation     Tick: 265 	mPC: 0x28 	PC: 0x7 	BUF: 0x2880000002 	AR: 0x7 	MC: 0x410
    	DataStack[97 <-]
    	RetStack[ <-]
-  DEBUG   datapath:sig_OUT       output: 'Hello, c' << 'a'
+  DEBUG   datapath:sig_out       output: 'Hello, c' << 'a'
   DEBUG   machine:simulation     Tick: 266 	mPC: 0x29 	PC: 0x7 	BUF: 0x2880000002 	AR: 0x7 	MC: 0x20000000
    	DataStack[97 <-]
    	RetStack[ <-]
@@ -868,7 +868,7 @@ out_log: |
   DEBUG   machine:simulation     Tick: 272 	mPC: 0x26 	PC: 0x1 	BUF: 0x2680000001 	AR: 0x1 	MC: 0x410
    	DataStack[ <-]
    	RetStack[ <-]
-  DEBUG   datapath:sig_IN        input: 't'
+  DEBUG   datapath:sig_in        input: 't'
   DEBUG   machine:simulation     Tick: 273 	mPC: 0x27 	PC: 0x1 	BUF: 0x74 	AR: 0x1 	MC: 0x10000100
    	DataStack[0 <-]
    	RetStack[ <-]
@@ -938,7 +938,7 @@ out_log: |
   DEBUG   machine:simulation     Tick: 295 	mPC: 0x28 	PC: 0x7 	BUF: 0x2880000002 	AR: 0x7 	MC: 0x410
    	DataStack[116 <-]
    	RetStack[ <-]
-  DEBUG   datapath:sig_OUT       output: 'Hello, ca' << 't'
+  DEBUG   datapath:sig_out       output: 'Hello, ca' << 't'
   DEBUG   machine:simulation     Tick: 296 	mPC: 0x29 	PC: 0x7 	BUF: 0x2880000002 	AR: 0x7 	MC: 0x20000000
    	DataStack[116 <-]
    	RetStack[ <-]
@@ -960,7 +960,7 @@ out_log: |
   DEBUG   machine:simulation     Tick: 302 	mPC: 0x26 	PC: 0x1 	BUF: 0x2680000001 	AR: 0x1 	MC: 0x410
    	DataStack[ <-]
    	RetStack[ <-]
-  DEBUG   datapath:sig_IN        input: '!'
+  DEBUG   datapath:sig_in        input: '!'
   DEBUG   machine:simulation     Tick: 303 	mPC: 0x27 	PC: 0x1 	BUF: 0x21 	AR: 0x1 	MC: 0x10000100
    	DataStack[0 <-]
    	RetStack[ <-]
@@ -1030,7 +1030,7 @@ out_log: |
   DEBUG   machine:simulation     Tick: 325 	mPC: 0x28 	PC: 0x7 	BUF: 0x2880000002 	AR: 0x7 	MC: 0x410
    	DataStack[33 <-]
    	RetStack[ <-]
-  DEBUG   datapath:sig_OUT       output: 'Hello, cat' << '!'
+  DEBUG   datapath:sig_out       output: 'Hello, cat' << '!'
   DEBUG   machine:simulation     Tick: 326 	mPC: 0x29 	PC: 0x7 	BUF: 0x2880000002 	AR: 0x7 	MC: 0x20000000
    	DataStack[33 <-]
    	RetStack[ <-]
@@ -1052,7 +1052,7 @@ out_log: |
   DEBUG   machine:simulation     Tick: 332 	mPC: 0x26 	PC: 0x1 	BUF: 0x2680000001 	AR: 0x1 	MC: 0x410
    	DataStack[ <-]
    	RetStack[ <-]
-  DEBUG   datapath:sig_IN        input: '\n'
+  DEBUG   datapath:sig_in        input: '\n'
   DEBUG   machine:simulation     Tick: 333 	mPC: 0x27 	PC: 0x1 	BUF: 0xa 	AR: 0x1 	MC: 0x10000100
    	DataStack[0 <-]
    	RetStack[ <-]
