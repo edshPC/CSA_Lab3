@@ -10,7 +10,11 @@ instructions: dict[Opcode, tuple[int]] = {
     Opcode.PUSH: (MC.latchAR | MC.ARmuxBUF | MC.dsPUSH, MC.memREAD | MC.latchTOS | MC.EndOfCommand),
     Opcode.POP: (MC.latchAR | MC.ARmuxBUF, MC.memWRITE | MC.dsPOP | MC.EndOfCommand),
     Opcode.PUSH_BY: (MC.aluLEFT | MC.aluNOP, MC.latchAR | MC.ARmuxBUF, MC.memREAD | MC.latchTOS | MC.EndOfCommand),
-    Opcode.POP_BY: (MC.aluLEFT | MC.aluNOP | MC.dsPOP, MC.latchAR | MC.ARmuxBUF, MC.memWRITE | MC.dsPOP | MC.EndOfCommand),
+    Opcode.POP_BY: (
+        MC.aluLEFT | MC.aluNOP | MC.dsPOP,
+        MC.latchAR | MC.ARmuxBUF,
+        MC.memWRITE | MC.dsPOP | MC.EndOfCommand,
+    ),
     Opcode.ADD: (MC.aluRIGHT | MC.dsPOP, MC.aluLEFT | MC.aluADD | MC.latchTOS | MC.EndOfCommand),
     Opcode.SUB: (MC.aluRIGHT | MC.dsPOP, MC.aluLEFT | MC.aluSUB | MC.latchTOS | MC.EndOfCommand),
     Opcode.MUL: (MC.aluRIGHT | MC.dsPOP, MC.aluLEFT | MC.aluMUL | MC.latchTOS | MC.EndOfCommand),
@@ -29,18 +33,19 @@ instructions: dict[Opcode, tuple[int]] = {
     Opcode.OUT: (MC.OUT, MC.dsPOP | MC.EndOfCommand),
 }
 
+
 class ControlUnit:
     _tick = 0  # Текущий такт
     microcommand_pc = 1  # pc микрокоманд
     microcommand = 0  # Текущая микрокоманда
     # Память микрокоманд (инициализирована с нуля NOP-om и выборкой инструкции)
     microcommand_mem: list[int] = [
-        MC.EndOfCommand, # NOP
-        MC.ARmuxPC | MC.latchAR, # Instr fetch
-        MC.memREAD | MC.latchMPC
+        MC.EndOfCommand,  # NOP
+        MC.ARmuxPC | MC.latchAR,  # Instr fetch
+        MC.memREAD | MC.latchMPC,
     ]
 
-    def __init__(self, startpos: int, datapath: DataPath, rs_size: int = 2 ** 8, **_):
+    def __init__(self, startpos: int, datapath: DataPath, rs_size: int = 2**8, **_):
         self.ret_stack = Stack(maxlen=rs_size)
         self.pc = startpos
         self.datapath = datapath
@@ -48,7 +53,6 @@ class ControlUnit:
         for opcode in instructions:  # Идём по списку инструкций
             datapath.instruction_micro_address[opcode] = len(self.microcommand_mem)
             self.microcommand_mem.extend(instructions[opcode])
-
 
     def tick(self) -> int:
         self.microcommand = self.microcommand_mem[self.microcommand_pc]
@@ -118,7 +122,7 @@ class ControlUnit:
         self.microcommand_pc = self.datapath.buffer >> 32
 
     def sig_BRANCH(self):
-        if not self.datapath.buffer: # NULL
+        if not self.datapath.buffer:  # NULL
             return
         assert self.datapath.buffer & (1 << 31) == 0, "Cannot access memory by address, use labels"
         if self.microcommand & MC.pushSTATE:
@@ -140,4 +144,3 @@ class ControlUnit:
  \tData{self.datapath.data_stack}
  \tRet{self.ret_stack}\
 """
-

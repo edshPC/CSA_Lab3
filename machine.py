@@ -4,6 +4,7 @@ from datapath import DataPath
 from controlunit import ControlUnit
 from isa import read_program
 
+
 def simulation(program: dict, input_tokens: list, tick_limit=10000, **kwargs):
     datapath = DataPath(input_tokens, **kwargs)
     controluint = ControlUnit(program["start"], datapath, **kwargs)
@@ -26,6 +27,7 @@ def simulation(program: dict, input_tokens: list, tick_limit=10000, **kwargs):
     print("".join(datapath.output_buf))
     print("Ticks:", controluint._tick)
 
+
 def main(program_file: str, input_file: str = None):
     program = read_program(program_file)
     input_tokens = []
@@ -33,14 +35,8 @@ def main(program_file: str, input_file: str = None):
         with open(input_file, "r", encoding="utf-8") as file:
             input_tokens = [c for c in file.read()]
 
-    simulation(
-        program,
-        input_tokens,
-        tick_limit=2**16,
-        memory_size=2**16,
-        ds_size=2**8,
-        rs_size=2**8
-    )
+    simulation(program, input_tokens, tick_limit=2**16, memory_size=2**16, ds_size=2**8, rs_size=2**8)
+
 
 if __name__ == "__main__":
     logging.getLogger().setLevel(logging.DEBUG)

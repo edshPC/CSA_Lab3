@@ -42,7 +42,6 @@ class Opcode(str, Enum):
             self.WORD: (1, 1024),
             self.DB: (1, 1024),
             self.RESW: (1, 1),
-
             self.PUSH: (1, 1),
             self.POP: (0, 1),
             self.JMP: (1, 1),
@@ -51,18 +50,21 @@ class Opcode(str, Enum):
             self.CALL: (1, 1),
             self.IN: (1, 1),
             self.OUT: (1, 1),
-
-            self._MEM: (-1, -1)
+            self._MEM: (-1, -1),
         }.get(self, (0, 0))
 
     def __str__(self):
         return str(self.value)
 
+
 counter = 0
+
+
 def autoshift():  # 1 << ++counter
     global counter
     counter += 1
     return 1 << counter
+
 
 # Микрокоды команд
 class MC(int, Enum):
@@ -86,7 +88,7 @@ class MC(int, Enum):
     memREAD = autoshift()
     memWRITE = autoshift()
 
-    #ALU
+    # ALU
     aluLEFT = autoshift()
     aluRIGHT = autoshift()
     aluADD = autoshift()
@@ -110,14 +112,14 @@ class MC(int, Enum):
     OUT = autoshift()
     HLT = autoshift()
 
+
 assert counter < 64, "Microcommand word is above 64 bit"
 
 
 def write_program(filename: str, program: dict):
     with open(filename, "w", encoding="utf-8") as file:
-        file.write(
-            re.sub(r'(\{.*?\},)', r'\1\n', json.dumps(program))
-        )
+        file.write(re.sub(r"(\{.*?\},)", r"\1\n", json.dumps(program)))
+
 
 def read_program(filename: str) -> dict:
     with open(filename, "r", encoding="utf-8") as file:

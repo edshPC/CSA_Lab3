@@ -1,5 +1,6 @@
 from collections import deque
 
+
 class Stack(deque):
     def push(self, x):
         assert self.size() < self.maxlen, "StackOverflow"
@@ -20,6 +21,7 @@ class Stack(deque):
 
     def __repr__(self):
         return f'Stack[{", ".join(str(x) for x in self)} <-]'
+
 
 # Расширяет 31-битное число, если отрицательно
 def extend_bits(num_31bit: int) -> int:

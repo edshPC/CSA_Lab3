@@ -6,7 +6,7 @@ import re
 
 def get_meaningful(text: str) -> str:
     # Удаляем из текста лишние отступы и комментарии
-    return re.sub(r'^\s+|\s*;.*', '', text, flags=re.MULTILINE)
+    return re.sub(r"^\s+|\s*;.*", "", text, flags=re.MULTILINE)
 
 
 def translate_stage_1(text: str) -> tuple[dict, list[dict]]:
@@ -23,22 +23,22 @@ def translate_stage_1(text: str) -> tuple[dict, list[dict]]:
             assert label not in labels, f"Redefinition of label: {label}"
             labels[label] = pc
         else:  # токен содержит инструкцию
-            mnemonic, *args = re.findall(r'(?:"[^"]*"|[^,\s])+', token) # разделение по пробелу не в кавычках
+            mnemonic, *args = re.findall(r'(?:"[^"]*"|[^,\s])+', token)  # разделение по пробелу не в кавычках
             opcode = Opcode(mnemonic.lower())
             a, b = opcode.arg_count
             assert a <= len(args) <= b, f"Invalid number of args for '{mnemonic}': Expected [{a};{b}], got {len(args)}"
 
             pc_diff = 1
-            if opcode == Opcode.WORD or opcode == Opcode.DB: # Команда сохранения константы
+            if opcode == Opcode.WORD or opcode == Opcode.DB:  # Команда сохранения константы
                 output = []
                 for arg in args:
                     if re.fullmatch(r'".*"', arg):
                         # Строку сохраняем посимвольно
                         output.extend(ord(x) for x in arg.strip('"'))
-                    elif re.fullmatch(r'0x[\da-fA-F]+|-?\d+', arg):
+                    elif re.fullmatch(r"0x[\da-fA-F]+|-?\d+", arg):
                         # Численный литерал
                         output.append(int(arg, 0))
-                    else: # Метка
+                    else:  # Метка
                         output.append(arg)
                 args = output
                 opcode = Opcode._MEM
@@ -51,7 +51,7 @@ def translate_stage_1(text: str) -> tuple[dict, list[dict]]:
 
             code.append({"index": pc, "opcode": opcode, "args": args})
             pc += pc_diff
-    code.append({"index": pc, "opcode": Opcode.HLT, "args": []}) # HLT в конце программы
+    code.append({"index": pc, "opcode": Opcode.HLT, "args": []})  # HLT в конце программы
     return labels, code
 
 
@@ -64,15 +64,14 @@ def translate_stage_2(labels: dict[str, int], code: list[dict]) -> tuple[int, li
             if isinstance(args[i], int):
                 continue
 
-            if re.fullmatch(r'[a-zA-Z_]+', args[i]):
+            if re.fullmatch(r"[a-zA-Z_]+", args[i]):
                 # Если это метка
                 assert args[i] in labels, f"Label not defined: {args[i]}"
                 args[i] = labels[args[i]]
             else:
                 # Если это литерал - 31-й бит показывает прямую загрузку аргумента вместо обращения к памяти
-                assert re.fullmatch(r'0x[\da-fA-F]+|-?\d+', args[i]), f"Unknown type of argument: {args[i]}"
+                assert re.fullmatch(r"0x[\da-fA-F]+|-?\d+", args[i]), f"Unknown type of argument: {args[i]}"
                 args[i] = (1 << 31) | (int(args[i], 0) & 0x7FFFFFFF)
-
 
     return startpos, code
 
@@ -90,7 +89,7 @@ def main(source: str, target: str):
 
     program = translate(source)
     write_program(target, program)
-    print("source LoC:", source.count("\n")+1, "code instr:", len(program["code"]))
+    print("source LoC:", source.count("\n") + 1, "code instr:", len(program["code"]))
 
 
 if __name__ == "__main__":
