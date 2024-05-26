@@ -35,16 +35,9 @@ instructions: dict[Opcode, tuple[int]] = {
     Opcode.OUT: (MC.OUT, MC.ds_pop | MC.EndOfCommand),
 }
 
-# Инициализация памяти микрокоманд (инициализирована с нуля NOP-om и выборкой инструкции)
-microcommand_init: list[int] = [
-    MC.EndOfCommand,  # NOP
-    MC.ARmuxPC | MC.latch_ar,  # Instr fetch
-    MC.mem_read | MC.latch_mpc,
-]
-
 
 class ControlUnit:
-    def __init__(self, startpos: int, datapath: DataPath, rs_size: int = 2**8, **_):
+    def __init__(self, startpos: int, datapath: DataPath, rs_size: int = 2 ** 8, **_):
         self._tick = 0  # Текущий такт
         self.microcommand_pc = 1  # pc микрокоманд
         self.microcommand = 0  # Текущая микрокоманда
@@ -53,6 +46,13 @@ class ControlUnit:
         self.pc = startpos
         self.datapath = datapath
         datapath.controlunit = self
+
+        # Инициализация памяти микрокоманд (инициализирована с нуля NOP-om и выборкой инструкции)
+        microcommand_init: list[int] = [
+            MC.EndOfCommand,  # NOP
+            MC.ARmuxPC | MC.latch_ar,  # Instr fetch
+            MC.mem_read | MC.latch_mpc,
+        ]
         for opcode in instructions:  # Идём по списку инструкций
             datapath.instruction_micro_address[opcode] = len(microcommand_init)
             microcommand_init.extend(instructions[opcode])
