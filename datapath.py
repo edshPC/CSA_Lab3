@@ -98,7 +98,9 @@ class DataPath:
         if not self.address_reg:  # NULL
             return
         assert self.address_reg & (1 << 31) == 0, "Cannot access memory by address, use labels"
-        self.memory[self.address_reg % self.memory_size] = self.data_stack.top
+        address = self.address_reg % self.memory_size
+        logging.debug("%s", f"MEM[{address}]: {self.memory[address]} -> {self.data_stack.top}")
+        self.memory[address] = self.data_stack.top
 
     def sig_alu_left(self):
         self.alu.left = self.data_stack.top

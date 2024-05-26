@@ -17,6 +17,12 @@ instructions: dict[Opcode, tuple[int]] = {
         MC.latch_ar | MC.ARmuxBUF,
         MC.mem_write | MC.ds_pop | MC.EndOfCommand,
     ),
+    Opcode.SWAP: (
+        MC.alu_left | MC.alu_nop | MC.ds_pop,
+        MC.alu_left | MC.latch_tos,
+        MC.ds_push | MC.alu_nop,
+        MC.latch_tos | MC.EndOfCommand,
+    ),
     Opcode.ADD: (MC.alu_right | MC.ds_pop, MC.alu_left | MC.alu_add | MC.latch_tos | MC.EndOfCommand),
     Opcode.SUB: (MC.alu_right | MC.ds_pop, MC.alu_left | MC.alu_sub | MC.latch_tos | MC.EndOfCommand),
     Opcode.MUL: (MC.alu_right | MC.ds_pop, MC.alu_left | MC.alu_mul | MC.latch_tos | MC.EndOfCommand),

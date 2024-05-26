@@ -14,6 +14,7 @@ class Opcode(str, Enum):
     POP = "pop"
     PUSH_BY = "push_by"
     POP_BY = "pop_by"
+    SWAP = "swap"
 
     ADD = "add"
     SUB = "sub"
