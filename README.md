@@ -292,4 +292,3 @@ CLI: `python machine.py <program_file> [<input_file>]`
 * `BRANCH` - сигнал перехода (пропустить в `PC` значение перехода)
 * `jz_branch` - совершить `BRANCH` только если `Z-flag` - истина
 * `jn_branch` - совершить `BRANCH` только если `N-flag` - истина
-

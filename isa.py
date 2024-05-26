@@ -116,6 +116,7 @@ class MC(int, Enum):
 
 assert counter < 32, "Microcommand word is above 32 bit"
 
+
 def write_program(filename: str, program: dict):
     with open(filename, "w", encoding="utf-8") as file:
         file.write(re.sub(r"(\{.*?},)", r"\1\n", json.dumps(program)))
