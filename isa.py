@@ -114,8 +114,7 @@ class MC(int, Enum):
     HLT = autoshift()
 
 
-assert counter < 64, "Microcommand word is above 64 bit"
-
+assert counter < 32, "Microcommand word is above 32 bit"
 
 def write_program(filename: str, program: dict):
     with open(filename, "w", encoding="utf-8") as file:
