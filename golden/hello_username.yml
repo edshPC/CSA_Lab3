@@ -1,4 +1,4 @@
-in_source: |-
+in_source: |
   ; Hello username
   first_message:
       db "Hello! What is your name?", 10, 0

@@ -1,4 +1,4 @@
-in_source: |-
+in_source: |
   ; Hello world
   message:
       db "Hello, world!", 10, 0
@@ -31,7 +31,7 @@ out_code: |-
    {"index": 24, "opcode": "hlt", "args": []},
    {"index": 25, "opcode": "hlt", "args": []}]}
 out_stdout: |
-  source LoC: 17 code instr: 11
+  source LoC: 18 code instr: 11
   ============================================================
   Hello, world!
 

@@ -1,4 +1,4 @@
-in_source: |-
+in_source: |
   ; Prob2
   val_a:
       db 0
@@ -48,7 +48,6 @@ in_source: |-
   skip_b:
       pop sum
       ret
-
 
   _start:
       push val_a
@@ -165,7 +164,7 @@ out_code: |-
    {"index": 100, "opcode": "call", "args": [37]},
    {"index": 101, "opcode": "hlt", "args": []}]}
 out_stdout: |
-  source LoC: 94 code instr: 70
+  source LoC: 92 code instr: 70
   ============================================================
   4613732
   Ticks: 2539
