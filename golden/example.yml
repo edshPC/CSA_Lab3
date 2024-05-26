@@ -87,7 +87,7 @@ out_code: |-
    {"index": 296, "opcode": "hlt", "args": []},
    {"index": 297, "opcode": "hlt", "args": []}]}
 out_stdout: |
-  source LoC: 49 code instr: 35
+  source LoC: 50 code instr: 35
   ============================================================
   
   Ticks: 815
