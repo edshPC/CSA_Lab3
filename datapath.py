@@ -32,12 +32,13 @@ class IOController:
 
 
 class DataPath:
-    address_reg = 0
-    buffer = 0
-    alu = ALU()
     controlunit = None
 
     def __init__(self, input_buf: list[str], memory_size: int = 2**16, ds_size: int = 2**8, **_):
+        self.address_reg = 0
+        self.buffer = 0
+        self.alu = ALU()
+
         self.data_stack = Stack(maxlen=ds_size)
         self.memory_size = memory_size
         self.memory = [0] * memory_size
