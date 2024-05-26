@@ -37,7 +37,7 @@ instructions: dict[Opcode, tuple[int]] = {
 
 
 class ControlUnit:
-    def __init__(self, startpos: int, datapath: DataPath, rs_size: int = 2 ** 8, **_):
+    def __init__(self, startpos: int, datapath: DataPath, rs_size: int = 2**8, **_):
         self._tick = 0  # Текущий такт
         self.microcommand_pc = 1  # pc микрокоманд
         self.microcommand = 0  # Текущая микрокоманда
