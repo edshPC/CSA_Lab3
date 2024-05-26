@@ -36,17 +36,17 @@ class DataPath:
     buffer = 0
     alu = ALU()
     controlunit = None
-    io_controller = IOController()
-    input_buf = io_controller.units[1]
-    output_buf = io_controller.units[2]
 
     def __init__(self, input_buf: list[str], memory_size: int = 2**16, ds_size: int = 2**8, **_):
         self.data_stack = Stack(maxlen=ds_size)
         self.memory_size = memory_size
         self.memory = [0] * memory_size
-        self.input_buf.extend(input_buf)
         # Адреса нахождения инструкций в памяти микрокоманд
         self.instruction_micro_address = {}
+        self.io_controller = IOController()
+        self.input_buf = self.io_controller.units[1]
+        self.output_buf = self.io_controller.units[2]
+        self.input_buf.extend(input_buf)
 
     def load_program(self, code: list[dict]):
         for instr in code:
