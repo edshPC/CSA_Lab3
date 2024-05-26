@@ -1,0 +1,2552 @@
+in_source: |
+  ; Example of commands
+  number:
+      word 777
+  hex:
+      word 0xA10F
+  buf:
+      resw 0x100
+      db 0
+  array:
+      db 10, 7, 12, 1, 666, 0x100, "AB"
+  array_len:
+      db 8
+  array_pointer:
+      db array
+
+  ; f(x) = x^2 + 2x - 7
+  function:
+      dup ; x, x
+      dup ; x, x, x
+      mul ; x, x^2
+      swap ; x^2, x
+      push 2
+      mul ; x^2, 2x
+      push 7 ; x^2, 2x, 7
+      sub ; x^2, 2x-7
+      add ; x^2 + 2x - 7
+      ret
+
+  ; Программа работает с массивом array, применяя функцию к каждому элементу и обновляя его в памяти
+  _start:
+      push array_pointer ; *arr+0
+  loop:
+      dup
+      dup ; *arr+i x3
+      push_by ; *arr+i x2, arr[i]
+      call function ; *arr+i x2, f(arr[i])
+      swap ; *arr+i, f(arr[i]), *arr+i
+      pop_by ; *arr+i
+      inc ; *arr+i+1
+      dup ; *arr+i+1 x2
+      push array_pointer ; *arr+i+1 x2, *arr
+      sub ; *arr+i+1, i+1
+      push array_len ; *arr+i+1, i+1, len
+      sub ; *arr+i+1, i+1-len ; if 0 it is the end
+      jz end
+      pop ; *arr+i+1 ; next element
+      jmp loop
+  end:
+      hlt
+in_stdin: |
+  -
+out_code: |-
+  {"start": 280, "code": [{"index": 1, "opcode": "mem", "args": [777]},
+   {"index": 2, "opcode": "mem", "args": [41231]},
+   {"index": 3, "opcode": "mem", "args": []},
+   {"index": 259, "opcode": "mem", "args": [0]},
+   {"index": 260, "opcode": "mem", "args": [10, 7, 12, 1, 666, 256, 65, 66]},
+   {"index": 268, "opcode": "mem", "args": [8]},
+   {"index": 269, "opcode": "mem", "args": [260]},
+   {"index": 270, "opcode": "dup", "args": []},
+   {"index": 271, "opcode": "dup", "args": []},
+   {"index": 272, "opcode": "mul", "args": []},
+   {"index": 273, "opcode": "swap", "args": []},
+   {"index": 274, "opcode": "push", "args": [2147483650]},
+   {"index": 275, "opcode": "mul", "args": []},
+   {"index": 276, "opcode": "push", "args": [2147483655]},
+   {"index": 277, "opcode": "sub", "args": []},
+   {"index": 278, "opcode": "add", "args": []},
+   {"index": 279, "opcode": "ret", "args": []},
+   {"index": 280, "opcode": "push", "args": [269]},
+   {"index": 281, "opcode": "dup", "args": []},
+   {"index": 282, "opcode": "dup", "args": []},
+   {"index": 283, "opcode": "push_by", "args": []},
+   {"index": 284, "opcode": "call", "args": [270]},
+   {"index": 285, "opcode": "swap", "args": []},
+   {"index": 286, "opcode": "pop_by", "args": []},
+   {"index": 287, "opcode": "inc", "args": []},
+   {"index": 288, "opcode": "dup", "args": []},
+   {"index": 289, "opcode": "push", "args": [269]},
+   {"index": 290, "opcode": "sub", "args": []},
+   {"index": 291, "opcode": "push", "args": [268]},
+   {"index": 292, "opcode": "sub", "args": []},
+   {"index": 293, "opcode": "jz", "args": [296]},
+   {"index": 294, "opcode": "pop", "args": []},
+   {"index": 295, "opcode": "jmp", "args": [281]},
+   {"index": 296, "opcode": "hlt", "args": []},
+   {"index": 297, "opcode": "hlt", "args": []}]}
+out_stdout: |
+  source LoC: 49 code instr: 35
+  ============================================================
+  
+  Ticks: 815
+out_log: |
+  DEBUG   machine:simulation     Tick: 0 	mPC: 0x1 	PC: 0x118 	BUF: 0x0 	AR: 0x0 	MC: 0x0
+   	DataStack[ <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 1 	mPC: 0x2 	PC: 0x118 	BUF: 0x0 	AR: 0x118 	MC: 0x60
+   	DataStack[ <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 2 	mPC: 0x5 	PC: 0x118 	BUF: 0x50000010d 	AR: 0x118 	MC: 0x410
+   	DataStack[ <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 3 	mPC: 0x6 	PC: 0x118 	BUF: 0x50000010d 	AR: 0x10d 	MC: 0x1a0
+   	DataStack[0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 4 	mPC: 0x1 	PC: 0x119 	BUF: 0x104 	AR: 0x10d 	MC: 0x406
+   	DataStack[260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 5 	mPC: 0x2 	PC: 0x119 	BUF: 0x104 	AR: 0x119 	MC: 0x60
+   	DataStack[260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 6 	mPC: 0x23 	PC: 0x119 	BUF: 0x2300000000 	AR: 0x119 	MC: 0x410
+   	DataStack[260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 7 	mPC: 0x24 	PC: 0x119 	BUF: 0x104 	AR: 0x119 	MC: 0x81100
+   	DataStack[260, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 8 	mPC: 0x1 	PC: 0x11a 	BUF: 0x104 	AR: 0x119 	MC: 0x6
+   	DataStack[260, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 9 	mPC: 0x2 	PC: 0x11a 	BUF: 0x104 	AR: 0x11a 	MC: 0x60
+   	DataStack[260, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 10 	mPC: 0x23 	PC: 0x11a 	BUF: 0x2300000000 	AR: 0x11a 	MC: 0x410
+   	DataStack[260, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 11 	mPC: 0x24 	PC: 0x11a 	BUF: 0x104 	AR: 0x11a 	MC: 0x81100
+   	DataStack[260, 260, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 12 	mPC: 0x1 	PC: 0x11b 	BUF: 0x104 	AR: 0x11a 	MC: 0x6
+   	DataStack[260, 260, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 13 	mPC: 0x2 	PC: 0x11b 	BUF: 0x104 	AR: 0x11b 	MC: 0x60
+   	DataStack[260, 260, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 14 	mPC: 0x9 	PC: 0x11b 	BUF: 0x900000000 	AR: 0x11b 	MC: 0x410
+   	DataStack[260, 260, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 15 	mPC: 0xa 	PC: 0x11b 	BUF: 0x104 	AR: 0x11b 	MC: 0x81000
+   	DataStack[260, 260, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 16 	mPC: 0xb 	PC: 0x11b 	BUF: 0x104 	AR: 0x104 	MC: 0xa0
+   	DataStack[260, 260, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 17 	mPC: 0x1 	PC: 0x11c 	BUF: 0xa 	AR: 0x104 	MC: 0x406
+   	DataStack[260, 260, 10 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 18 	mPC: 0x2 	PC: 0x11c 	BUF: 0xa 	AR: 0x11c 	MC: 0x60
+   	DataStack[260, 260, 10 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 19 	mPC: 0x28 	PC: 0x11c 	BUF: 0x280000010e 	AR: 0x11c 	MC: 0x410
+   	DataStack[260, 260, 10 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 20 	mPC: 0x1 	PC: 0x10e 	BUF: 0x280000010e 	AR: 0x11c 	MC: 0x4800002
+   	DataStack[260, 260, 10 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 21 	mPC: 0x2 	PC: 0x10e 	BUF: 0x280000010e 	AR: 0x10e 	MC: 0x60
+   	DataStack[260, 260, 10 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 22 	mPC: 0x23 	PC: 0x10e 	BUF: 0x2300000000 	AR: 0x10e 	MC: 0x410
+   	DataStack[260, 260, 10 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 23 	mPC: 0x24 	PC: 0x10e 	BUF: 0xa 	AR: 0x10e 	MC: 0x81100
+   	DataStack[260, 260, 10, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 24 	mPC: 0x1 	PC: 0x10f 	BUF: 0xa 	AR: 0x10e 	MC: 0x6
+   	DataStack[260, 260, 10, 10 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 25 	mPC: 0x2 	PC: 0x10f 	BUF: 0xa 	AR: 0x10f 	MC: 0x60
+   	DataStack[260, 260, 10, 10 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 26 	mPC: 0x23 	PC: 0x10f 	BUF: 0x2300000000 	AR: 0x10f 	MC: 0x410
+   	DataStack[260, 260, 10, 10 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 27 	mPC: 0x24 	PC: 0x10f 	BUF: 0xa 	AR: 0x10f 	MC: 0x81100
+   	DataStack[260, 260, 10, 10, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 28 	mPC: 0x1 	PC: 0x110 	BUF: 0xa 	AR: 0x10f 	MC: 0x6
+   	DataStack[260, 260, 10, 10, 10 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 29 	mPC: 0x2 	PC: 0x110 	BUF: 0xa 	AR: 0x110 	MC: 0x60
+   	DataStack[260, 260, 10, 10, 10 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 30 	mPC: 0x17 	PC: 0x110 	BUF: 0x1700000000 	AR: 0x110 	MC: 0x410
+   	DataStack[260, 260, 10, 10, 10 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 31 	mPC: 0x18 	PC: 0x110 	BUF: 0x1700000000 	AR: 0x110 	MC: 0x2200
+   	DataStack[260, 260, 10, 10 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 32 	mPC: 0x1 	PC: 0x111 	BUF: 0x64 	AR: 0x110 	MC: 0x11006
+   	DataStack[260, 260, 10, 100 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 33 	mPC: 0x2 	PC: 0x111 	BUF: 0x64 	AR: 0x111 	MC: 0x60
+   	DataStack[260, 260, 10, 100 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 34 	mPC: 0xf 	PC: 0x111 	BUF: 0xf00000000 	AR: 0x111 	MC: 0x410
+   	DataStack[260, 260, 10, 100 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 35 	mPC: 0x10 	PC: 0x111 	BUF: 0x64 	AR: 0x111 	MC: 0x81200
+   	DataStack[260, 260, 10 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 36 	mPC: 0x11 	PC: 0x111 	BUF: 0x64 	AR: 0x111 	MC: 0x1004
+   	DataStack[260, 260, 100 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 37 	mPC: 0x12 	PC: 0x111 	BUF: 0xa 	AR: 0x111 	MC: 0x80100
+   	DataStack[260, 260, 100, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 38 	mPC: 0x1 	PC: 0x112 	BUF: 0xa 	AR: 0x111 	MC: 0x6
+   	DataStack[260, 260, 100, 10 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 39 	mPC: 0x2 	PC: 0x112 	BUF: 0xa 	AR: 0x112 	MC: 0x60
+   	DataStack[260, 260, 100, 10 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 40 	mPC: 0x5 	PC: 0x112 	BUF: 0x580000002 	AR: 0x112 	MC: 0x410
+   	DataStack[260, 260, 100, 10 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 41 	mPC: 0x6 	PC: 0x112 	BUF: 0x580000002 	AR: 0x80000002 	MC: 0x1a0
+   	DataStack[260, 260, 100, 10, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 42 	mPC: 0x1 	PC: 0x113 	BUF: 0x2 	AR: 0x80000002 	MC: 0x406
+   	DataStack[260, 260, 100, 10, 2 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 43 	mPC: 0x2 	PC: 0x113 	BUF: 0x2 	AR: 0x113 	MC: 0x60
+   	DataStack[260, 260, 100, 10, 2 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 44 	mPC: 0x17 	PC: 0x113 	BUF: 0x1700000000 	AR: 0x113 	MC: 0x410
+   	DataStack[260, 260, 100, 10, 2 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 45 	mPC: 0x18 	PC: 0x113 	BUF: 0x1700000000 	AR: 0x113 	MC: 0x2200
+   	DataStack[260, 260, 100, 10 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 46 	mPC: 0x1 	PC: 0x114 	BUF: 0x14 	AR: 0x113 	MC: 0x11006
+   	DataStack[260, 260, 100, 20 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 47 	mPC: 0x2 	PC: 0x114 	BUF: 0x14 	AR: 0x114 	MC: 0x60
+   	DataStack[260, 260, 100, 20 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 48 	mPC: 0x5 	PC: 0x114 	BUF: 0x580000007 	AR: 0x114 	MC: 0x410
+   	DataStack[260, 260, 100, 20 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 49 	mPC: 0x6 	PC: 0x114 	BUF: 0x580000007 	AR: 0x80000007 	MC: 0x1a0
+   	DataStack[260, 260, 100, 20, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 50 	mPC: 0x1 	PC: 0x115 	BUF: 0x7 	AR: 0x80000007 	MC: 0x406
+   	DataStack[260, 260, 100, 20, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 51 	mPC: 0x2 	PC: 0x115 	BUF: 0x7 	AR: 0x115 	MC: 0x60
+   	DataStack[260, 260, 100, 20, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 52 	mPC: 0x15 	PC: 0x115 	BUF: 0x1500000000 	AR: 0x115 	MC: 0x410
+   	DataStack[260, 260, 100, 20, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 53 	mPC: 0x16 	PC: 0x115 	BUF: 0x1500000000 	AR: 0x115 	MC: 0x2200
+   	DataStack[260, 260, 100, 20 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 54 	mPC: 0x1 	PC: 0x116 	BUF: 0xd 	AR: 0x115 	MC: 0x9006
+   	DataStack[260, 260, 100, 13 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 55 	mPC: 0x2 	PC: 0x116 	BUF: 0xd 	AR: 0x116 	MC: 0x60
+   	DataStack[260, 260, 100, 13 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 56 	mPC: 0x13 	PC: 0x116 	BUF: 0x1300000000 	AR: 0x116 	MC: 0x410
+   	DataStack[260, 260, 100, 13 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 57 	mPC: 0x14 	PC: 0x116 	BUF: 0x1300000000 	AR: 0x116 	MC: 0x2200
+   	DataStack[260, 260, 100 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 58 	mPC: 0x1 	PC: 0x117 	BUF: 0x71 	AR: 0x116 	MC: 0x5006
+   	DataStack[260, 260, 113 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 59 	mPC: 0x2 	PC: 0x117 	BUF: 0x71 	AR: 0x117 	MC: 0x60
+   	DataStack[260, 260, 113 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 60 	mPC: 0x29 	PC: 0x117 	BUF: 0x2900000000 	AR: 0x117 	MC: 0x410
+   	DataStack[260, 260, 113 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 61 	mPC: 0x1 	PC: 0x11d 	BUF: 0x11d 	AR: 0x117 	MC: 0x8800002
+   	DataStack[260, 260, 113 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 62 	mPC: 0x2 	PC: 0x11d 	BUF: 0x11d 	AR: 0x11d 	MC: 0x60
+   	DataStack[260, 260, 113 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 63 	mPC: 0xf 	PC: 0x11d 	BUF: 0xf00000000 	AR: 0x11d 	MC: 0x410
+   	DataStack[260, 260, 113 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 64 	mPC: 0x10 	PC: 0x11d 	BUF: 0x71 	AR: 0x11d 	MC: 0x81200
+   	DataStack[260, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 65 	mPC: 0x11 	PC: 0x11d 	BUF: 0x71 	AR: 0x11d 	MC: 0x1004
+   	DataStack[260, 113 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 66 	mPC: 0x12 	PC: 0x11d 	BUF: 0x104 	AR: 0x11d 	MC: 0x80100
+   	DataStack[260, 113, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 67 	mPC: 0x1 	PC: 0x11e 	BUF: 0x104 	AR: 0x11d 	MC: 0x6
+   	DataStack[260, 113, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 68 	mPC: 0x2 	PC: 0x11e 	BUF: 0x104 	AR: 0x11e 	MC: 0x60
+   	DataStack[260, 113, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 69 	mPC: 0xc 	PC: 0x11e 	BUF: 0xc00000000 	AR: 0x11e 	MC: 0x410
+   	DataStack[260, 113, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 70 	mPC: 0xd 	PC: 0x11e 	BUF: 0x104 	AR: 0x11e 	MC: 0x81200
+   	DataStack[260, 113 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 71 	mPC: 0xe 	PC: 0x11e 	BUF: 0x104 	AR: 0x104 	MC: 0xa0
+   	DataStack[260, 113 <-]
+   	RetStack[ <-]
+  DEBUG   datapath:sig_mem_write MEM[260]: 10 -> 113
+  DEBUG   machine:simulation     Tick: 72 	mPC: 0x1 	PC: 0x11f 	BUF: 0x104 	AR: 0x104 	MC: 0xa02
+   	DataStack[260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 73 	mPC: 0x2 	PC: 0x11f 	BUF: 0x104 	AR: 0x11f 	MC: 0x60
+   	DataStack[260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 74 	mPC: 0x1f 	PC: 0x11f 	BUF: 0x1f00000000 	AR: 0x11f 	MC: 0x410
+   	DataStack[260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 75 	mPC: 0x20 	PC: 0x11f 	BUF: 0x105 	AR: 0x11f 	MC: 0x281000
+   	DataStack[260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 76 	mPC: 0x1 	PC: 0x120 	BUF: 0x105 	AR: 0x11f 	MC: 0x6
+   	DataStack[261 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 77 	mPC: 0x2 	PC: 0x120 	BUF: 0x105 	AR: 0x120 	MC: 0x60
+   	DataStack[261 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 78 	mPC: 0x23 	PC: 0x120 	BUF: 0x2300000000 	AR: 0x120 	MC: 0x410
+   	DataStack[261 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 79 	mPC: 0x24 	PC: 0x120 	BUF: 0x105 	AR: 0x120 	MC: 0x81100
+   	DataStack[261, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 80 	mPC: 0x1 	PC: 0x121 	BUF: 0x105 	AR: 0x120 	MC: 0x6
+   	DataStack[261, 261 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 81 	mPC: 0x2 	PC: 0x121 	BUF: 0x105 	AR: 0x121 	MC: 0x60
+   	DataStack[261, 261 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 82 	mPC: 0x5 	PC: 0x121 	BUF: 0x50000010d 	AR: 0x121 	MC: 0x410
+   	DataStack[261, 261 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 83 	mPC: 0x6 	PC: 0x121 	BUF: 0x50000010d 	AR: 0x10d 	MC: 0x1a0
+   	DataStack[261, 261, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 84 	mPC: 0x1 	PC: 0x122 	BUF: 0x104 	AR: 0x10d 	MC: 0x406
+   	DataStack[261, 261, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 85 	mPC: 0x2 	PC: 0x122 	BUF: 0x104 	AR: 0x122 	MC: 0x60
+   	DataStack[261, 261, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 86 	mPC: 0x15 	PC: 0x122 	BUF: 0x1500000000 	AR: 0x122 	MC: 0x410
+   	DataStack[261, 261, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 87 	mPC: 0x16 	PC: 0x122 	BUF: 0x1500000000 	AR: 0x122 	MC: 0x2200
+   	DataStack[261, 261 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 88 	mPC: 0x1 	PC: 0x123 	BUF: 0x1 	AR: 0x122 	MC: 0x9006
+   	DataStack[261, 1 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 89 	mPC: 0x2 	PC: 0x123 	BUF: 0x1 	AR: 0x123 	MC: 0x60
+   	DataStack[261, 1 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 90 	mPC: 0x5 	PC: 0x123 	BUF: 0x50000010c 	AR: 0x123 	MC: 0x410
+   	DataStack[261, 1 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 91 	mPC: 0x6 	PC: 0x123 	BUF: 0x50000010c 	AR: 0x10c 	MC: 0x1a0
+   	DataStack[261, 1, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 92 	mPC: 0x1 	PC: 0x124 	BUF: 0x8 	AR: 0x10c 	MC: 0x406
+   	DataStack[261, 1, 8 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 93 	mPC: 0x2 	PC: 0x124 	BUF: 0x8 	AR: 0x124 	MC: 0x60
+   	DataStack[261, 1, 8 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 94 	mPC: 0x15 	PC: 0x124 	BUF: 0x1500000000 	AR: 0x124 	MC: 0x410
+   	DataStack[261, 1, 8 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 95 	mPC: 0x16 	PC: 0x124 	BUF: 0x1500000000 	AR: 0x124 	MC: 0x2200
+   	DataStack[261, 1 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 96 	mPC: 0x1 	PC: 0x125 	BUF: -0x7 	AR: 0x124 	MC: 0x9006
+   	DataStack[261, -7 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 97 	mPC: 0x2 	PC: 0x125 	BUF: -0x7 	AR: 0x125 	MC: 0x60
+   	DataStack[261, -7 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 98 	mPC: 0x26 	PC: 0x125 	BUF: 0x2600000128 	AR: 0x125 	MC: 0x410
+   	DataStack[261, -7 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 99 	mPC: 0x1 	PC: 0x126 	BUF: 0x2600000128 	AR: 0x125 	MC: 0x1800002
+   	DataStack[261, -7 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 100 	mPC: 0x2 	PC: 0x126 	BUF: 0x2600000128 	AR: 0x126 	MC: 0x60
+   	DataStack[261, -7 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 101 	mPC: 0x7 	PC: 0x126 	BUF: 0x700000000 	AR: 0x126 	MC: 0x410
+   	DataStack[261, -7 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 102 	mPC: 0x8 	PC: 0x126 	BUF: 0x700000000 	AR: 0x0 	MC: 0xa0
+   	DataStack[261, -7 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 103 	mPC: 0x1 	PC: 0x127 	BUF: 0x700000000 	AR: 0x0 	MC: 0xa02
+   	DataStack[261 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 104 	mPC: 0x2 	PC: 0x127 	BUF: 0x700000000 	AR: 0x127 	MC: 0x60
+   	DataStack[261 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 105 	mPC: 0x25 	PC: 0x127 	BUF: 0x2500000119 	AR: 0x127 	MC: 0x410
+   	DataStack[261 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 106 	mPC: 0x1 	PC: 0x119 	BUF: 0x2500000119 	AR: 0x127 	MC: 0x800002
+   	DataStack[261 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 107 	mPC: 0x2 	PC: 0x119 	BUF: 0x2500000119 	AR: 0x119 	MC: 0x60
+   	DataStack[261 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 108 	mPC: 0x23 	PC: 0x119 	BUF: 0x2300000000 	AR: 0x119 	MC: 0x410
+   	DataStack[261 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 109 	mPC: 0x24 	PC: 0x119 	BUF: 0x105 	AR: 0x119 	MC: 0x81100
+   	DataStack[261, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 110 	mPC: 0x1 	PC: 0x11a 	BUF: 0x105 	AR: 0x119 	MC: 0x6
+   	DataStack[261, 261 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 111 	mPC: 0x2 	PC: 0x11a 	BUF: 0x105 	AR: 0x11a 	MC: 0x60
+   	DataStack[261, 261 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 112 	mPC: 0x23 	PC: 0x11a 	BUF: 0x2300000000 	AR: 0x11a 	MC: 0x410
+   	DataStack[261, 261 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 113 	mPC: 0x24 	PC: 0x11a 	BUF: 0x105 	AR: 0x11a 	MC: 0x81100
+   	DataStack[261, 261, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 114 	mPC: 0x1 	PC: 0x11b 	BUF: 0x105 	AR: 0x11a 	MC: 0x6
+   	DataStack[261, 261, 261 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 115 	mPC: 0x2 	PC: 0x11b 	BUF: 0x105 	AR: 0x11b 	MC: 0x60
+   	DataStack[261, 261, 261 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 116 	mPC: 0x9 	PC: 0x11b 	BUF: 0x900000000 	AR: 0x11b 	MC: 0x410
+   	DataStack[261, 261, 261 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 117 	mPC: 0xa 	PC: 0x11b 	BUF: 0x105 	AR: 0x11b 	MC: 0x81000
+   	DataStack[261, 261, 261 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 118 	mPC: 0xb 	PC: 0x11b 	BUF: 0x105 	AR: 0x105 	MC: 0xa0
+   	DataStack[261, 261, 261 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 119 	mPC: 0x1 	PC: 0x11c 	BUF: 0x7 	AR: 0x105 	MC: 0x406
+   	DataStack[261, 261, 7 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 120 	mPC: 0x2 	PC: 0x11c 	BUF: 0x7 	AR: 0x11c 	MC: 0x60
+   	DataStack[261, 261, 7 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 121 	mPC: 0x28 	PC: 0x11c 	BUF: 0x280000010e 	AR: 0x11c 	MC: 0x410
+   	DataStack[261, 261, 7 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 122 	mPC: 0x1 	PC: 0x10e 	BUF: 0x280000010e 	AR: 0x11c 	MC: 0x4800002
+   	DataStack[261, 261, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 123 	mPC: 0x2 	PC: 0x10e 	BUF: 0x280000010e 	AR: 0x10e 	MC: 0x60
+   	DataStack[261, 261, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 124 	mPC: 0x23 	PC: 0x10e 	BUF: 0x2300000000 	AR: 0x10e 	MC: 0x410
+   	DataStack[261, 261, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 125 	mPC: 0x24 	PC: 0x10e 	BUF: 0x7 	AR: 0x10e 	MC: 0x81100
+   	DataStack[261, 261, 7, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 126 	mPC: 0x1 	PC: 0x10f 	BUF: 0x7 	AR: 0x10e 	MC: 0x6
+   	DataStack[261, 261, 7, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 127 	mPC: 0x2 	PC: 0x10f 	BUF: 0x7 	AR: 0x10f 	MC: 0x60
+   	DataStack[261, 261, 7, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 128 	mPC: 0x23 	PC: 0x10f 	BUF: 0x2300000000 	AR: 0x10f 	MC: 0x410
+   	DataStack[261, 261, 7, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 129 	mPC: 0x24 	PC: 0x10f 	BUF: 0x7 	AR: 0x10f 	MC: 0x81100
+   	DataStack[261, 261, 7, 7, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 130 	mPC: 0x1 	PC: 0x110 	BUF: 0x7 	AR: 0x10f 	MC: 0x6
+   	DataStack[261, 261, 7, 7, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 131 	mPC: 0x2 	PC: 0x110 	BUF: 0x7 	AR: 0x110 	MC: 0x60
+   	DataStack[261, 261, 7, 7, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 132 	mPC: 0x17 	PC: 0x110 	BUF: 0x1700000000 	AR: 0x110 	MC: 0x410
+   	DataStack[261, 261, 7, 7, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 133 	mPC: 0x18 	PC: 0x110 	BUF: 0x1700000000 	AR: 0x110 	MC: 0x2200
+   	DataStack[261, 261, 7, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 134 	mPC: 0x1 	PC: 0x111 	BUF: 0x31 	AR: 0x110 	MC: 0x11006
+   	DataStack[261, 261, 7, 49 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 135 	mPC: 0x2 	PC: 0x111 	BUF: 0x31 	AR: 0x111 	MC: 0x60
+   	DataStack[261, 261, 7, 49 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 136 	mPC: 0xf 	PC: 0x111 	BUF: 0xf00000000 	AR: 0x111 	MC: 0x410
+   	DataStack[261, 261, 7, 49 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 137 	mPC: 0x10 	PC: 0x111 	BUF: 0x31 	AR: 0x111 	MC: 0x81200
+   	DataStack[261, 261, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 138 	mPC: 0x11 	PC: 0x111 	BUF: 0x31 	AR: 0x111 	MC: 0x1004
+   	DataStack[261, 261, 49 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 139 	mPC: 0x12 	PC: 0x111 	BUF: 0x7 	AR: 0x111 	MC: 0x80100
+   	DataStack[261, 261, 49, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 140 	mPC: 0x1 	PC: 0x112 	BUF: 0x7 	AR: 0x111 	MC: 0x6
+   	DataStack[261, 261, 49, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 141 	mPC: 0x2 	PC: 0x112 	BUF: 0x7 	AR: 0x112 	MC: 0x60
+   	DataStack[261, 261, 49, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 142 	mPC: 0x5 	PC: 0x112 	BUF: 0x580000002 	AR: 0x112 	MC: 0x410
+   	DataStack[261, 261, 49, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 143 	mPC: 0x6 	PC: 0x112 	BUF: 0x580000002 	AR: 0x80000002 	MC: 0x1a0
+   	DataStack[261, 261, 49, 7, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 144 	mPC: 0x1 	PC: 0x113 	BUF: 0x2 	AR: 0x80000002 	MC: 0x406
+   	DataStack[261, 261, 49, 7, 2 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 145 	mPC: 0x2 	PC: 0x113 	BUF: 0x2 	AR: 0x113 	MC: 0x60
+   	DataStack[261, 261, 49, 7, 2 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 146 	mPC: 0x17 	PC: 0x113 	BUF: 0x1700000000 	AR: 0x113 	MC: 0x410
+   	DataStack[261, 261, 49, 7, 2 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 147 	mPC: 0x18 	PC: 0x113 	BUF: 0x1700000000 	AR: 0x113 	MC: 0x2200
+   	DataStack[261, 261, 49, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 148 	mPC: 0x1 	PC: 0x114 	BUF: 0xe 	AR: 0x113 	MC: 0x11006
+   	DataStack[261, 261, 49, 14 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 149 	mPC: 0x2 	PC: 0x114 	BUF: 0xe 	AR: 0x114 	MC: 0x60
+   	DataStack[261, 261, 49, 14 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 150 	mPC: 0x5 	PC: 0x114 	BUF: 0x580000007 	AR: 0x114 	MC: 0x410
+   	DataStack[261, 261, 49, 14 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 151 	mPC: 0x6 	PC: 0x114 	BUF: 0x580000007 	AR: 0x80000007 	MC: 0x1a0
+   	DataStack[261, 261, 49, 14, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 152 	mPC: 0x1 	PC: 0x115 	BUF: 0x7 	AR: 0x80000007 	MC: 0x406
+   	DataStack[261, 261, 49, 14, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 153 	mPC: 0x2 	PC: 0x115 	BUF: 0x7 	AR: 0x115 	MC: 0x60
+   	DataStack[261, 261, 49, 14, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 154 	mPC: 0x15 	PC: 0x115 	BUF: 0x1500000000 	AR: 0x115 	MC: 0x410
+   	DataStack[261, 261, 49, 14, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 155 	mPC: 0x16 	PC: 0x115 	BUF: 0x1500000000 	AR: 0x115 	MC: 0x2200
+   	DataStack[261, 261, 49, 14 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 156 	mPC: 0x1 	PC: 0x116 	BUF: 0x7 	AR: 0x115 	MC: 0x9006
+   	DataStack[261, 261, 49, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 157 	mPC: 0x2 	PC: 0x116 	BUF: 0x7 	AR: 0x116 	MC: 0x60
+   	DataStack[261, 261, 49, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 158 	mPC: 0x13 	PC: 0x116 	BUF: 0x1300000000 	AR: 0x116 	MC: 0x410
+   	DataStack[261, 261, 49, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 159 	mPC: 0x14 	PC: 0x116 	BUF: 0x1300000000 	AR: 0x116 	MC: 0x2200
+   	DataStack[261, 261, 49 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 160 	mPC: 0x1 	PC: 0x117 	BUF: 0x38 	AR: 0x116 	MC: 0x5006
+   	DataStack[261, 261, 56 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 161 	mPC: 0x2 	PC: 0x117 	BUF: 0x38 	AR: 0x117 	MC: 0x60
+   	DataStack[261, 261, 56 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 162 	mPC: 0x29 	PC: 0x117 	BUF: 0x2900000000 	AR: 0x117 	MC: 0x410
+   	DataStack[261, 261, 56 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 163 	mPC: 0x1 	PC: 0x11d 	BUF: 0x11d 	AR: 0x117 	MC: 0x8800002
+   	DataStack[261, 261, 56 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 164 	mPC: 0x2 	PC: 0x11d 	BUF: 0x11d 	AR: 0x11d 	MC: 0x60
+   	DataStack[261, 261, 56 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 165 	mPC: 0xf 	PC: 0x11d 	BUF: 0xf00000000 	AR: 0x11d 	MC: 0x410
+   	DataStack[261, 261, 56 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 166 	mPC: 0x10 	PC: 0x11d 	BUF: 0x38 	AR: 0x11d 	MC: 0x81200
+   	DataStack[261, 261 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 167 	mPC: 0x11 	PC: 0x11d 	BUF: 0x38 	AR: 0x11d 	MC: 0x1004
+   	DataStack[261, 56 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 168 	mPC: 0x12 	PC: 0x11d 	BUF: 0x105 	AR: 0x11d 	MC: 0x80100
+   	DataStack[261, 56, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 169 	mPC: 0x1 	PC: 0x11e 	BUF: 0x105 	AR: 0x11d 	MC: 0x6
+   	DataStack[261, 56, 261 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 170 	mPC: 0x2 	PC: 0x11e 	BUF: 0x105 	AR: 0x11e 	MC: 0x60
+   	DataStack[261, 56, 261 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 171 	mPC: 0xc 	PC: 0x11e 	BUF: 0xc00000000 	AR: 0x11e 	MC: 0x410
+   	DataStack[261, 56, 261 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 172 	mPC: 0xd 	PC: 0x11e 	BUF: 0x105 	AR: 0x11e 	MC: 0x81200
+   	DataStack[261, 56 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 173 	mPC: 0xe 	PC: 0x11e 	BUF: 0x105 	AR: 0x105 	MC: 0xa0
+   	DataStack[261, 56 <-]
+   	RetStack[ <-]
+  DEBUG   datapath:sig_mem_write MEM[261]: 7 -> 56
+  DEBUG   machine:simulation     Tick: 174 	mPC: 0x1 	PC: 0x11f 	BUF: 0x105 	AR: 0x105 	MC: 0xa02
+   	DataStack[261 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 175 	mPC: 0x2 	PC: 0x11f 	BUF: 0x105 	AR: 0x11f 	MC: 0x60
+   	DataStack[261 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 176 	mPC: 0x1f 	PC: 0x11f 	BUF: 0x1f00000000 	AR: 0x11f 	MC: 0x410
+   	DataStack[261 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 177 	mPC: 0x20 	PC: 0x11f 	BUF: 0x106 	AR: 0x11f 	MC: 0x281000
+   	DataStack[261 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 178 	mPC: 0x1 	PC: 0x120 	BUF: 0x106 	AR: 0x11f 	MC: 0x6
+   	DataStack[262 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 179 	mPC: 0x2 	PC: 0x120 	BUF: 0x106 	AR: 0x120 	MC: 0x60
+   	DataStack[262 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 180 	mPC: 0x23 	PC: 0x120 	BUF: 0x2300000000 	AR: 0x120 	MC: 0x410
+   	DataStack[262 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 181 	mPC: 0x24 	PC: 0x120 	BUF: 0x106 	AR: 0x120 	MC: 0x81100
+   	DataStack[262, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 182 	mPC: 0x1 	PC: 0x121 	BUF: 0x106 	AR: 0x120 	MC: 0x6
+   	DataStack[262, 262 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 183 	mPC: 0x2 	PC: 0x121 	BUF: 0x106 	AR: 0x121 	MC: 0x60
+   	DataStack[262, 262 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 184 	mPC: 0x5 	PC: 0x121 	BUF: 0x50000010d 	AR: 0x121 	MC: 0x410
+   	DataStack[262, 262 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 185 	mPC: 0x6 	PC: 0x121 	BUF: 0x50000010d 	AR: 0x10d 	MC: 0x1a0
+   	DataStack[262, 262, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 186 	mPC: 0x1 	PC: 0x122 	BUF: 0x104 	AR: 0x10d 	MC: 0x406
+   	DataStack[262, 262, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 187 	mPC: 0x2 	PC: 0x122 	BUF: 0x104 	AR: 0x122 	MC: 0x60
+   	DataStack[262, 262, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 188 	mPC: 0x15 	PC: 0x122 	BUF: 0x1500000000 	AR: 0x122 	MC: 0x410
+   	DataStack[262, 262, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 189 	mPC: 0x16 	PC: 0x122 	BUF: 0x1500000000 	AR: 0x122 	MC: 0x2200
+   	DataStack[262, 262 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 190 	mPC: 0x1 	PC: 0x123 	BUF: 0x2 	AR: 0x122 	MC: 0x9006
+   	DataStack[262, 2 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 191 	mPC: 0x2 	PC: 0x123 	BUF: 0x2 	AR: 0x123 	MC: 0x60
+   	DataStack[262, 2 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 192 	mPC: 0x5 	PC: 0x123 	BUF: 0x50000010c 	AR: 0x123 	MC: 0x410
+   	DataStack[262, 2 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 193 	mPC: 0x6 	PC: 0x123 	BUF: 0x50000010c 	AR: 0x10c 	MC: 0x1a0
+   	DataStack[262, 2, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 194 	mPC: 0x1 	PC: 0x124 	BUF: 0x8 	AR: 0x10c 	MC: 0x406
+   	DataStack[262, 2, 8 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 195 	mPC: 0x2 	PC: 0x124 	BUF: 0x8 	AR: 0x124 	MC: 0x60
+   	DataStack[262, 2, 8 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 196 	mPC: 0x15 	PC: 0x124 	BUF: 0x1500000000 	AR: 0x124 	MC: 0x410
+   	DataStack[262, 2, 8 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 197 	mPC: 0x16 	PC: 0x124 	BUF: 0x1500000000 	AR: 0x124 	MC: 0x2200
+   	DataStack[262, 2 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 198 	mPC: 0x1 	PC: 0x125 	BUF: -0x6 	AR: 0x124 	MC: 0x9006
+   	DataStack[262, -6 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 199 	mPC: 0x2 	PC: 0x125 	BUF: -0x6 	AR: 0x125 	MC: 0x60
+   	DataStack[262, -6 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 200 	mPC: 0x26 	PC: 0x125 	BUF: 0x2600000128 	AR: 0x125 	MC: 0x410
+   	DataStack[262, -6 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 201 	mPC: 0x1 	PC: 0x126 	BUF: 0x2600000128 	AR: 0x125 	MC: 0x1800002
+   	DataStack[262, -6 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 202 	mPC: 0x2 	PC: 0x126 	BUF: 0x2600000128 	AR: 0x126 	MC: 0x60
+   	DataStack[262, -6 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 203 	mPC: 0x7 	PC: 0x126 	BUF: 0x700000000 	AR: 0x126 	MC: 0x410
+   	DataStack[262, -6 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 204 	mPC: 0x8 	PC: 0x126 	BUF: 0x700000000 	AR: 0x0 	MC: 0xa0
+   	DataStack[262, -6 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 205 	mPC: 0x1 	PC: 0x127 	BUF: 0x700000000 	AR: 0x0 	MC: 0xa02
+   	DataStack[262 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 206 	mPC: 0x2 	PC: 0x127 	BUF: 0x700000000 	AR: 0x127 	MC: 0x60
+   	DataStack[262 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 207 	mPC: 0x25 	PC: 0x127 	BUF: 0x2500000119 	AR: 0x127 	MC: 0x410
+   	DataStack[262 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 208 	mPC: 0x1 	PC: 0x119 	BUF: 0x2500000119 	AR: 0x127 	MC: 0x800002
+   	DataStack[262 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 209 	mPC: 0x2 	PC: 0x119 	BUF: 0x2500000119 	AR: 0x119 	MC: 0x60
+   	DataStack[262 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 210 	mPC: 0x23 	PC: 0x119 	BUF: 0x2300000000 	AR: 0x119 	MC: 0x410
+   	DataStack[262 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 211 	mPC: 0x24 	PC: 0x119 	BUF: 0x106 	AR: 0x119 	MC: 0x81100
+   	DataStack[262, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 212 	mPC: 0x1 	PC: 0x11a 	BUF: 0x106 	AR: 0x119 	MC: 0x6
+   	DataStack[262, 262 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 213 	mPC: 0x2 	PC: 0x11a 	BUF: 0x106 	AR: 0x11a 	MC: 0x60
+   	DataStack[262, 262 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 214 	mPC: 0x23 	PC: 0x11a 	BUF: 0x2300000000 	AR: 0x11a 	MC: 0x410
+   	DataStack[262, 262 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 215 	mPC: 0x24 	PC: 0x11a 	BUF: 0x106 	AR: 0x11a 	MC: 0x81100
+   	DataStack[262, 262, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 216 	mPC: 0x1 	PC: 0x11b 	BUF: 0x106 	AR: 0x11a 	MC: 0x6
+   	DataStack[262, 262, 262 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 217 	mPC: 0x2 	PC: 0x11b 	BUF: 0x106 	AR: 0x11b 	MC: 0x60
+   	DataStack[262, 262, 262 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 218 	mPC: 0x9 	PC: 0x11b 	BUF: 0x900000000 	AR: 0x11b 	MC: 0x410
+   	DataStack[262, 262, 262 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 219 	mPC: 0xa 	PC: 0x11b 	BUF: 0x106 	AR: 0x11b 	MC: 0x81000
+   	DataStack[262, 262, 262 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 220 	mPC: 0xb 	PC: 0x11b 	BUF: 0x106 	AR: 0x106 	MC: 0xa0
+   	DataStack[262, 262, 262 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 221 	mPC: 0x1 	PC: 0x11c 	BUF: 0xc 	AR: 0x106 	MC: 0x406
+   	DataStack[262, 262, 12 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 222 	mPC: 0x2 	PC: 0x11c 	BUF: 0xc 	AR: 0x11c 	MC: 0x60
+   	DataStack[262, 262, 12 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 223 	mPC: 0x28 	PC: 0x11c 	BUF: 0x280000010e 	AR: 0x11c 	MC: 0x410
+   	DataStack[262, 262, 12 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 224 	mPC: 0x1 	PC: 0x10e 	BUF: 0x280000010e 	AR: 0x11c 	MC: 0x4800002
+   	DataStack[262, 262, 12 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 225 	mPC: 0x2 	PC: 0x10e 	BUF: 0x280000010e 	AR: 0x10e 	MC: 0x60
+   	DataStack[262, 262, 12 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 226 	mPC: 0x23 	PC: 0x10e 	BUF: 0x2300000000 	AR: 0x10e 	MC: 0x410
+   	DataStack[262, 262, 12 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 227 	mPC: 0x24 	PC: 0x10e 	BUF: 0xc 	AR: 0x10e 	MC: 0x81100
+   	DataStack[262, 262, 12, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 228 	mPC: 0x1 	PC: 0x10f 	BUF: 0xc 	AR: 0x10e 	MC: 0x6
+   	DataStack[262, 262, 12, 12 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 229 	mPC: 0x2 	PC: 0x10f 	BUF: 0xc 	AR: 0x10f 	MC: 0x60
+   	DataStack[262, 262, 12, 12 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 230 	mPC: 0x23 	PC: 0x10f 	BUF: 0x2300000000 	AR: 0x10f 	MC: 0x410
+   	DataStack[262, 262, 12, 12 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 231 	mPC: 0x24 	PC: 0x10f 	BUF: 0xc 	AR: 0x10f 	MC: 0x81100
+   	DataStack[262, 262, 12, 12, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 232 	mPC: 0x1 	PC: 0x110 	BUF: 0xc 	AR: 0x10f 	MC: 0x6
+   	DataStack[262, 262, 12, 12, 12 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 233 	mPC: 0x2 	PC: 0x110 	BUF: 0xc 	AR: 0x110 	MC: 0x60
+   	DataStack[262, 262, 12, 12, 12 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 234 	mPC: 0x17 	PC: 0x110 	BUF: 0x1700000000 	AR: 0x110 	MC: 0x410
+   	DataStack[262, 262, 12, 12, 12 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 235 	mPC: 0x18 	PC: 0x110 	BUF: 0x1700000000 	AR: 0x110 	MC: 0x2200
+   	DataStack[262, 262, 12, 12 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 236 	mPC: 0x1 	PC: 0x111 	BUF: 0x90 	AR: 0x110 	MC: 0x11006
+   	DataStack[262, 262, 12, 144 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 237 	mPC: 0x2 	PC: 0x111 	BUF: 0x90 	AR: 0x111 	MC: 0x60
+   	DataStack[262, 262, 12, 144 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 238 	mPC: 0xf 	PC: 0x111 	BUF: 0xf00000000 	AR: 0x111 	MC: 0x410
+   	DataStack[262, 262, 12, 144 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 239 	mPC: 0x10 	PC: 0x111 	BUF: 0x90 	AR: 0x111 	MC: 0x81200
+   	DataStack[262, 262, 12 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 240 	mPC: 0x11 	PC: 0x111 	BUF: 0x90 	AR: 0x111 	MC: 0x1004
+   	DataStack[262, 262, 144 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 241 	mPC: 0x12 	PC: 0x111 	BUF: 0xc 	AR: 0x111 	MC: 0x80100
+   	DataStack[262, 262, 144, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 242 	mPC: 0x1 	PC: 0x112 	BUF: 0xc 	AR: 0x111 	MC: 0x6
+   	DataStack[262, 262, 144, 12 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 243 	mPC: 0x2 	PC: 0x112 	BUF: 0xc 	AR: 0x112 	MC: 0x60
+   	DataStack[262, 262, 144, 12 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 244 	mPC: 0x5 	PC: 0x112 	BUF: 0x580000002 	AR: 0x112 	MC: 0x410
+   	DataStack[262, 262, 144, 12 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 245 	mPC: 0x6 	PC: 0x112 	BUF: 0x580000002 	AR: 0x80000002 	MC: 0x1a0
+   	DataStack[262, 262, 144, 12, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 246 	mPC: 0x1 	PC: 0x113 	BUF: 0x2 	AR: 0x80000002 	MC: 0x406
+   	DataStack[262, 262, 144, 12, 2 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 247 	mPC: 0x2 	PC: 0x113 	BUF: 0x2 	AR: 0x113 	MC: 0x60
+   	DataStack[262, 262, 144, 12, 2 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 248 	mPC: 0x17 	PC: 0x113 	BUF: 0x1700000000 	AR: 0x113 	MC: 0x410
+   	DataStack[262, 262, 144, 12, 2 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 249 	mPC: 0x18 	PC: 0x113 	BUF: 0x1700000000 	AR: 0x113 	MC: 0x2200
+   	DataStack[262, 262, 144, 12 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 250 	mPC: 0x1 	PC: 0x114 	BUF: 0x18 	AR: 0x113 	MC: 0x11006
+   	DataStack[262, 262, 144, 24 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 251 	mPC: 0x2 	PC: 0x114 	BUF: 0x18 	AR: 0x114 	MC: 0x60
+   	DataStack[262, 262, 144, 24 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 252 	mPC: 0x5 	PC: 0x114 	BUF: 0x580000007 	AR: 0x114 	MC: 0x410
+   	DataStack[262, 262, 144, 24 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 253 	mPC: 0x6 	PC: 0x114 	BUF: 0x580000007 	AR: 0x80000007 	MC: 0x1a0
+   	DataStack[262, 262, 144, 24, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 254 	mPC: 0x1 	PC: 0x115 	BUF: 0x7 	AR: 0x80000007 	MC: 0x406
+   	DataStack[262, 262, 144, 24, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 255 	mPC: 0x2 	PC: 0x115 	BUF: 0x7 	AR: 0x115 	MC: 0x60
+   	DataStack[262, 262, 144, 24, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 256 	mPC: 0x15 	PC: 0x115 	BUF: 0x1500000000 	AR: 0x115 	MC: 0x410
+   	DataStack[262, 262, 144, 24, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 257 	mPC: 0x16 	PC: 0x115 	BUF: 0x1500000000 	AR: 0x115 	MC: 0x2200
+   	DataStack[262, 262, 144, 24 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 258 	mPC: 0x1 	PC: 0x116 	BUF: 0x11 	AR: 0x115 	MC: 0x9006
+   	DataStack[262, 262, 144, 17 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 259 	mPC: 0x2 	PC: 0x116 	BUF: 0x11 	AR: 0x116 	MC: 0x60
+   	DataStack[262, 262, 144, 17 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 260 	mPC: 0x13 	PC: 0x116 	BUF: 0x1300000000 	AR: 0x116 	MC: 0x410
+   	DataStack[262, 262, 144, 17 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 261 	mPC: 0x14 	PC: 0x116 	BUF: 0x1300000000 	AR: 0x116 	MC: 0x2200
+   	DataStack[262, 262, 144 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 262 	mPC: 0x1 	PC: 0x117 	BUF: 0xa1 	AR: 0x116 	MC: 0x5006
+   	DataStack[262, 262, 161 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 263 	mPC: 0x2 	PC: 0x117 	BUF: 0xa1 	AR: 0x117 	MC: 0x60
+   	DataStack[262, 262, 161 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 264 	mPC: 0x29 	PC: 0x117 	BUF: 0x2900000000 	AR: 0x117 	MC: 0x410
+   	DataStack[262, 262, 161 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 265 	mPC: 0x1 	PC: 0x11d 	BUF: 0x11d 	AR: 0x117 	MC: 0x8800002
+   	DataStack[262, 262, 161 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 266 	mPC: 0x2 	PC: 0x11d 	BUF: 0x11d 	AR: 0x11d 	MC: 0x60
+   	DataStack[262, 262, 161 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 267 	mPC: 0xf 	PC: 0x11d 	BUF: 0xf00000000 	AR: 0x11d 	MC: 0x410
+   	DataStack[262, 262, 161 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 268 	mPC: 0x10 	PC: 0x11d 	BUF: 0xa1 	AR: 0x11d 	MC: 0x81200
+   	DataStack[262, 262 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 269 	mPC: 0x11 	PC: 0x11d 	BUF: 0xa1 	AR: 0x11d 	MC: 0x1004
+   	DataStack[262, 161 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 270 	mPC: 0x12 	PC: 0x11d 	BUF: 0x106 	AR: 0x11d 	MC: 0x80100
+   	DataStack[262, 161, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 271 	mPC: 0x1 	PC: 0x11e 	BUF: 0x106 	AR: 0x11d 	MC: 0x6
+   	DataStack[262, 161, 262 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 272 	mPC: 0x2 	PC: 0x11e 	BUF: 0x106 	AR: 0x11e 	MC: 0x60
+   	DataStack[262, 161, 262 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 273 	mPC: 0xc 	PC: 0x11e 	BUF: 0xc00000000 	AR: 0x11e 	MC: 0x410
+   	DataStack[262, 161, 262 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 274 	mPC: 0xd 	PC: 0x11e 	BUF: 0x106 	AR: 0x11e 	MC: 0x81200
+   	DataStack[262, 161 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 275 	mPC: 0xe 	PC: 0x11e 	BUF: 0x106 	AR: 0x106 	MC: 0xa0
+   	DataStack[262, 161 <-]
+   	RetStack[ <-]
+  DEBUG   datapath:sig_mem_write MEM[262]: 12 -> 161
+  DEBUG   machine:simulation     Tick: 276 	mPC: 0x1 	PC: 0x11f 	BUF: 0x106 	AR: 0x106 	MC: 0xa02
+   	DataStack[262 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 277 	mPC: 0x2 	PC: 0x11f 	BUF: 0x106 	AR: 0x11f 	MC: 0x60
+   	DataStack[262 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 278 	mPC: 0x1f 	PC: 0x11f 	BUF: 0x1f00000000 	AR: 0x11f 	MC: 0x410
+   	DataStack[262 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 279 	mPC: 0x20 	PC: 0x11f 	BUF: 0x107 	AR: 0x11f 	MC: 0x281000
+   	DataStack[262 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 280 	mPC: 0x1 	PC: 0x120 	BUF: 0x107 	AR: 0x11f 	MC: 0x6
+   	DataStack[263 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 281 	mPC: 0x2 	PC: 0x120 	BUF: 0x107 	AR: 0x120 	MC: 0x60
+   	DataStack[263 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 282 	mPC: 0x23 	PC: 0x120 	BUF: 0x2300000000 	AR: 0x120 	MC: 0x410
+   	DataStack[263 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 283 	mPC: 0x24 	PC: 0x120 	BUF: 0x107 	AR: 0x120 	MC: 0x81100
+   	DataStack[263, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 284 	mPC: 0x1 	PC: 0x121 	BUF: 0x107 	AR: 0x120 	MC: 0x6
+   	DataStack[263, 263 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 285 	mPC: 0x2 	PC: 0x121 	BUF: 0x107 	AR: 0x121 	MC: 0x60
+   	DataStack[263, 263 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 286 	mPC: 0x5 	PC: 0x121 	BUF: 0x50000010d 	AR: 0x121 	MC: 0x410
+   	DataStack[263, 263 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 287 	mPC: 0x6 	PC: 0x121 	BUF: 0x50000010d 	AR: 0x10d 	MC: 0x1a0
+   	DataStack[263, 263, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 288 	mPC: 0x1 	PC: 0x122 	BUF: 0x104 	AR: 0x10d 	MC: 0x406
+   	DataStack[263, 263, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 289 	mPC: 0x2 	PC: 0x122 	BUF: 0x104 	AR: 0x122 	MC: 0x60
+   	DataStack[263, 263, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 290 	mPC: 0x15 	PC: 0x122 	BUF: 0x1500000000 	AR: 0x122 	MC: 0x410
+   	DataStack[263, 263, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 291 	mPC: 0x16 	PC: 0x122 	BUF: 0x1500000000 	AR: 0x122 	MC: 0x2200
+   	DataStack[263, 263 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 292 	mPC: 0x1 	PC: 0x123 	BUF: 0x3 	AR: 0x122 	MC: 0x9006
+   	DataStack[263, 3 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 293 	mPC: 0x2 	PC: 0x123 	BUF: 0x3 	AR: 0x123 	MC: 0x60
+   	DataStack[263, 3 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 294 	mPC: 0x5 	PC: 0x123 	BUF: 0x50000010c 	AR: 0x123 	MC: 0x410
+   	DataStack[263, 3 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 295 	mPC: 0x6 	PC: 0x123 	BUF: 0x50000010c 	AR: 0x10c 	MC: 0x1a0
+   	DataStack[263, 3, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 296 	mPC: 0x1 	PC: 0x124 	BUF: 0x8 	AR: 0x10c 	MC: 0x406
+   	DataStack[263, 3, 8 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 297 	mPC: 0x2 	PC: 0x124 	BUF: 0x8 	AR: 0x124 	MC: 0x60
+   	DataStack[263, 3, 8 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 298 	mPC: 0x15 	PC: 0x124 	BUF: 0x1500000000 	AR: 0x124 	MC: 0x410
+   	DataStack[263, 3, 8 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 299 	mPC: 0x16 	PC: 0x124 	BUF: 0x1500000000 	AR: 0x124 	MC: 0x2200
+   	DataStack[263, 3 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 300 	mPC: 0x1 	PC: 0x125 	BUF: -0x5 	AR: 0x124 	MC: 0x9006
+   	DataStack[263, -5 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 301 	mPC: 0x2 	PC: 0x125 	BUF: -0x5 	AR: 0x125 	MC: 0x60
+   	DataStack[263, -5 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 302 	mPC: 0x26 	PC: 0x125 	BUF: 0x2600000128 	AR: 0x125 	MC: 0x410
+   	DataStack[263, -5 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 303 	mPC: 0x1 	PC: 0x126 	BUF: 0x2600000128 	AR: 0x125 	MC: 0x1800002
+   	DataStack[263, -5 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 304 	mPC: 0x2 	PC: 0x126 	BUF: 0x2600000128 	AR: 0x126 	MC: 0x60
+   	DataStack[263, -5 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 305 	mPC: 0x7 	PC: 0x126 	BUF: 0x700000000 	AR: 0x126 	MC: 0x410
+   	DataStack[263, -5 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 306 	mPC: 0x8 	PC: 0x126 	BUF: 0x700000000 	AR: 0x0 	MC: 0xa0
+   	DataStack[263, -5 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 307 	mPC: 0x1 	PC: 0x127 	BUF: 0x700000000 	AR: 0x0 	MC: 0xa02
+   	DataStack[263 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 308 	mPC: 0x2 	PC: 0x127 	BUF: 0x700000000 	AR: 0x127 	MC: 0x60
+   	DataStack[263 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 309 	mPC: 0x25 	PC: 0x127 	BUF: 0x2500000119 	AR: 0x127 	MC: 0x410
+   	DataStack[263 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 310 	mPC: 0x1 	PC: 0x119 	BUF: 0x2500000119 	AR: 0x127 	MC: 0x800002
+   	DataStack[263 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 311 	mPC: 0x2 	PC: 0x119 	BUF: 0x2500000119 	AR: 0x119 	MC: 0x60
+   	DataStack[263 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 312 	mPC: 0x23 	PC: 0x119 	BUF: 0x2300000000 	AR: 0x119 	MC: 0x410
+   	DataStack[263 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 313 	mPC: 0x24 	PC: 0x119 	BUF: 0x107 	AR: 0x119 	MC: 0x81100
+   	DataStack[263, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 314 	mPC: 0x1 	PC: 0x11a 	BUF: 0x107 	AR: 0x119 	MC: 0x6
+   	DataStack[263, 263 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 315 	mPC: 0x2 	PC: 0x11a 	BUF: 0x107 	AR: 0x11a 	MC: 0x60
+   	DataStack[263, 263 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 316 	mPC: 0x23 	PC: 0x11a 	BUF: 0x2300000000 	AR: 0x11a 	MC: 0x410
+   	DataStack[263, 263 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 317 	mPC: 0x24 	PC: 0x11a 	BUF: 0x107 	AR: 0x11a 	MC: 0x81100
+   	DataStack[263, 263, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 318 	mPC: 0x1 	PC: 0x11b 	BUF: 0x107 	AR: 0x11a 	MC: 0x6
+   	DataStack[263, 263, 263 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 319 	mPC: 0x2 	PC: 0x11b 	BUF: 0x107 	AR: 0x11b 	MC: 0x60
+   	DataStack[263, 263, 263 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 320 	mPC: 0x9 	PC: 0x11b 	BUF: 0x900000000 	AR: 0x11b 	MC: 0x410
+   	DataStack[263, 263, 263 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 321 	mPC: 0xa 	PC: 0x11b 	BUF: 0x107 	AR: 0x11b 	MC: 0x81000
+   	DataStack[263, 263, 263 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 322 	mPC: 0xb 	PC: 0x11b 	BUF: 0x107 	AR: 0x107 	MC: 0xa0
+   	DataStack[263, 263, 263 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 323 	mPC: 0x1 	PC: 0x11c 	BUF: 0x1 	AR: 0x107 	MC: 0x406
+   	DataStack[263, 263, 1 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 324 	mPC: 0x2 	PC: 0x11c 	BUF: 0x1 	AR: 0x11c 	MC: 0x60
+   	DataStack[263, 263, 1 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 325 	mPC: 0x28 	PC: 0x11c 	BUF: 0x280000010e 	AR: 0x11c 	MC: 0x410
+   	DataStack[263, 263, 1 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 326 	mPC: 0x1 	PC: 0x10e 	BUF: 0x280000010e 	AR: 0x11c 	MC: 0x4800002
+   	DataStack[263, 263, 1 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 327 	mPC: 0x2 	PC: 0x10e 	BUF: 0x280000010e 	AR: 0x10e 	MC: 0x60
+   	DataStack[263, 263, 1 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 328 	mPC: 0x23 	PC: 0x10e 	BUF: 0x2300000000 	AR: 0x10e 	MC: 0x410
+   	DataStack[263, 263, 1 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 329 	mPC: 0x24 	PC: 0x10e 	BUF: 0x1 	AR: 0x10e 	MC: 0x81100
+   	DataStack[263, 263, 1, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 330 	mPC: 0x1 	PC: 0x10f 	BUF: 0x1 	AR: 0x10e 	MC: 0x6
+   	DataStack[263, 263, 1, 1 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 331 	mPC: 0x2 	PC: 0x10f 	BUF: 0x1 	AR: 0x10f 	MC: 0x60
+   	DataStack[263, 263, 1, 1 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 332 	mPC: 0x23 	PC: 0x10f 	BUF: 0x2300000000 	AR: 0x10f 	MC: 0x410
+   	DataStack[263, 263, 1, 1 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 333 	mPC: 0x24 	PC: 0x10f 	BUF: 0x1 	AR: 0x10f 	MC: 0x81100
+   	DataStack[263, 263, 1, 1, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 334 	mPC: 0x1 	PC: 0x110 	BUF: 0x1 	AR: 0x10f 	MC: 0x6
+   	DataStack[263, 263, 1, 1, 1 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 335 	mPC: 0x2 	PC: 0x110 	BUF: 0x1 	AR: 0x110 	MC: 0x60
+   	DataStack[263, 263, 1, 1, 1 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 336 	mPC: 0x17 	PC: 0x110 	BUF: 0x1700000000 	AR: 0x110 	MC: 0x410
+   	DataStack[263, 263, 1, 1, 1 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 337 	mPC: 0x18 	PC: 0x110 	BUF: 0x1700000000 	AR: 0x110 	MC: 0x2200
+   	DataStack[263, 263, 1, 1 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 338 	mPC: 0x1 	PC: 0x111 	BUF: 0x1 	AR: 0x110 	MC: 0x11006
+   	DataStack[263, 263, 1, 1 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 339 	mPC: 0x2 	PC: 0x111 	BUF: 0x1 	AR: 0x111 	MC: 0x60
+   	DataStack[263, 263, 1, 1 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 340 	mPC: 0xf 	PC: 0x111 	BUF: 0xf00000000 	AR: 0x111 	MC: 0x410
+   	DataStack[263, 263, 1, 1 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 341 	mPC: 0x10 	PC: 0x111 	BUF: 0x1 	AR: 0x111 	MC: 0x81200
+   	DataStack[263, 263, 1 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 342 	mPC: 0x11 	PC: 0x111 	BUF: 0x1 	AR: 0x111 	MC: 0x1004
+   	DataStack[263, 263, 1 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 343 	mPC: 0x12 	PC: 0x111 	BUF: 0x1 	AR: 0x111 	MC: 0x80100
+   	DataStack[263, 263, 1, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 344 	mPC: 0x1 	PC: 0x112 	BUF: 0x1 	AR: 0x111 	MC: 0x6
+   	DataStack[263, 263, 1, 1 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 345 	mPC: 0x2 	PC: 0x112 	BUF: 0x1 	AR: 0x112 	MC: 0x60
+   	DataStack[263, 263, 1, 1 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 346 	mPC: 0x5 	PC: 0x112 	BUF: 0x580000002 	AR: 0x112 	MC: 0x410
+   	DataStack[263, 263, 1, 1 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 347 	mPC: 0x6 	PC: 0x112 	BUF: 0x580000002 	AR: 0x80000002 	MC: 0x1a0
+   	DataStack[263, 263, 1, 1, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 348 	mPC: 0x1 	PC: 0x113 	BUF: 0x2 	AR: 0x80000002 	MC: 0x406
+   	DataStack[263, 263, 1, 1, 2 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 349 	mPC: 0x2 	PC: 0x113 	BUF: 0x2 	AR: 0x113 	MC: 0x60
+   	DataStack[263, 263, 1, 1, 2 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 350 	mPC: 0x17 	PC: 0x113 	BUF: 0x1700000000 	AR: 0x113 	MC: 0x410
+   	DataStack[263, 263, 1, 1, 2 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 351 	mPC: 0x18 	PC: 0x113 	BUF: 0x1700000000 	AR: 0x113 	MC: 0x2200
+   	DataStack[263, 263, 1, 1 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 352 	mPC: 0x1 	PC: 0x114 	BUF: 0x2 	AR: 0x113 	MC: 0x11006
+   	DataStack[263, 263, 1, 2 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 353 	mPC: 0x2 	PC: 0x114 	BUF: 0x2 	AR: 0x114 	MC: 0x60
+   	DataStack[263, 263, 1, 2 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 354 	mPC: 0x5 	PC: 0x114 	BUF: 0x580000007 	AR: 0x114 	MC: 0x410
+   	DataStack[263, 263, 1, 2 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 355 	mPC: 0x6 	PC: 0x114 	BUF: 0x580000007 	AR: 0x80000007 	MC: 0x1a0
+   	DataStack[263, 263, 1, 2, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 356 	mPC: 0x1 	PC: 0x115 	BUF: 0x7 	AR: 0x80000007 	MC: 0x406
+   	DataStack[263, 263, 1, 2, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 357 	mPC: 0x2 	PC: 0x115 	BUF: 0x7 	AR: 0x115 	MC: 0x60
+   	DataStack[263, 263, 1, 2, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 358 	mPC: 0x15 	PC: 0x115 	BUF: 0x1500000000 	AR: 0x115 	MC: 0x410
+   	DataStack[263, 263, 1, 2, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 359 	mPC: 0x16 	PC: 0x115 	BUF: 0x1500000000 	AR: 0x115 	MC: 0x2200
+   	DataStack[263, 263, 1, 2 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 360 	mPC: 0x1 	PC: 0x116 	BUF: -0x5 	AR: 0x115 	MC: 0x9006
+   	DataStack[263, 263, 1, -5 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 361 	mPC: 0x2 	PC: 0x116 	BUF: -0x5 	AR: 0x116 	MC: 0x60
+   	DataStack[263, 263, 1, -5 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 362 	mPC: 0x13 	PC: 0x116 	BUF: 0x1300000000 	AR: 0x116 	MC: 0x410
+   	DataStack[263, 263, 1, -5 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 363 	mPC: 0x14 	PC: 0x116 	BUF: 0x1300000000 	AR: 0x116 	MC: 0x2200
+   	DataStack[263, 263, 1 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 364 	mPC: 0x1 	PC: 0x117 	BUF: -0x4 	AR: 0x116 	MC: 0x5006
+   	DataStack[263, 263, -4 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 365 	mPC: 0x2 	PC: 0x117 	BUF: -0x4 	AR: 0x117 	MC: 0x60
+   	DataStack[263, 263, -4 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 366 	mPC: 0x29 	PC: 0x117 	BUF: 0x2900000000 	AR: 0x117 	MC: 0x410
+   	DataStack[263, 263, -4 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 367 	mPC: 0x1 	PC: 0x11d 	BUF: 0x11d 	AR: 0x117 	MC: 0x8800002
+   	DataStack[263, 263, -4 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 368 	mPC: 0x2 	PC: 0x11d 	BUF: 0x11d 	AR: 0x11d 	MC: 0x60
+   	DataStack[263, 263, -4 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 369 	mPC: 0xf 	PC: 0x11d 	BUF: 0xf00000000 	AR: 0x11d 	MC: 0x410
+   	DataStack[263, 263, -4 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 370 	mPC: 0x10 	PC: 0x11d 	BUF: -0x4 	AR: 0x11d 	MC: 0x81200
+   	DataStack[263, 263 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 371 	mPC: 0x11 	PC: 0x11d 	BUF: -0x4 	AR: 0x11d 	MC: 0x1004
+   	DataStack[263, -4 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 372 	mPC: 0x12 	PC: 0x11d 	BUF: 0x107 	AR: 0x11d 	MC: 0x80100
+   	DataStack[263, -4, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 373 	mPC: 0x1 	PC: 0x11e 	BUF: 0x107 	AR: 0x11d 	MC: 0x6
+   	DataStack[263, -4, 263 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 374 	mPC: 0x2 	PC: 0x11e 	BUF: 0x107 	AR: 0x11e 	MC: 0x60
+   	DataStack[263, -4, 263 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 375 	mPC: 0xc 	PC: 0x11e 	BUF: 0xc00000000 	AR: 0x11e 	MC: 0x410
+   	DataStack[263, -4, 263 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 376 	mPC: 0xd 	PC: 0x11e 	BUF: 0x107 	AR: 0x11e 	MC: 0x81200
+   	DataStack[263, -4 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 377 	mPC: 0xe 	PC: 0x11e 	BUF: 0x107 	AR: 0x107 	MC: 0xa0
+   	DataStack[263, -4 <-]
+   	RetStack[ <-]
+  DEBUG   datapath:sig_mem_write MEM[263]: 1 -> -4
+  DEBUG   machine:simulation     Tick: 378 	mPC: 0x1 	PC: 0x11f 	BUF: 0x107 	AR: 0x107 	MC: 0xa02
+   	DataStack[263 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 379 	mPC: 0x2 	PC: 0x11f 	BUF: 0x107 	AR: 0x11f 	MC: 0x60
+   	DataStack[263 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 380 	mPC: 0x1f 	PC: 0x11f 	BUF: 0x1f00000000 	AR: 0x11f 	MC: 0x410
+   	DataStack[263 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 381 	mPC: 0x20 	PC: 0x11f 	BUF: 0x108 	AR: 0x11f 	MC: 0x281000
+   	DataStack[263 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 382 	mPC: 0x1 	PC: 0x120 	BUF: 0x108 	AR: 0x11f 	MC: 0x6
+   	DataStack[264 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 383 	mPC: 0x2 	PC: 0x120 	BUF: 0x108 	AR: 0x120 	MC: 0x60
+   	DataStack[264 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 384 	mPC: 0x23 	PC: 0x120 	BUF: 0x2300000000 	AR: 0x120 	MC: 0x410
+   	DataStack[264 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 385 	mPC: 0x24 	PC: 0x120 	BUF: 0x108 	AR: 0x120 	MC: 0x81100
+   	DataStack[264, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 386 	mPC: 0x1 	PC: 0x121 	BUF: 0x108 	AR: 0x120 	MC: 0x6
+   	DataStack[264, 264 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 387 	mPC: 0x2 	PC: 0x121 	BUF: 0x108 	AR: 0x121 	MC: 0x60
+   	DataStack[264, 264 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 388 	mPC: 0x5 	PC: 0x121 	BUF: 0x50000010d 	AR: 0x121 	MC: 0x410
+   	DataStack[264, 264 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 389 	mPC: 0x6 	PC: 0x121 	BUF: 0x50000010d 	AR: 0x10d 	MC: 0x1a0
+   	DataStack[264, 264, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 390 	mPC: 0x1 	PC: 0x122 	BUF: 0x104 	AR: 0x10d 	MC: 0x406
+   	DataStack[264, 264, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 391 	mPC: 0x2 	PC: 0x122 	BUF: 0x104 	AR: 0x122 	MC: 0x60
+   	DataStack[264, 264, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 392 	mPC: 0x15 	PC: 0x122 	BUF: 0x1500000000 	AR: 0x122 	MC: 0x410
+   	DataStack[264, 264, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 393 	mPC: 0x16 	PC: 0x122 	BUF: 0x1500000000 	AR: 0x122 	MC: 0x2200
+   	DataStack[264, 264 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 394 	mPC: 0x1 	PC: 0x123 	BUF: 0x4 	AR: 0x122 	MC: 0x9006
+   	DataStack[264, 4 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 395 	mPC: 0x2 	PC: 0x123 	BUF: 0x4 	AR: 0x123 	MC: 0x60
+   	DataStack[264, 4 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 396 	mPC: 0x5 	PC: 0x123 	BUF: 0x50000010c 	AR: 0x123 	MC: 0x410
+   	DataStack[264, 4 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 397 	mPC: 0x6 	PC: 0x123 	BUF: 0x50000010c 	AR: 0x10c 	MC: 0x1a0
+   	DataStack[264, 4, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 398 	mPC: 0x1 	PC: 0x124 	BUF: 0x8 	AR: 0x10c 	MC: 0x406
+   	DataStack[264, 4, 8 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 399 	mPC: 0x2 	PC: 0x124 	BUF: 0x8 	AR: 0x124 	MC: 0x60
+   	DataStack[264, 4, 8 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 400 	mPC: 0x15 	PC: 0x124 	BUF: 0x1500000000 	AR: 0x124 	MC: 0x410
+   	DataStack[264, 4, 8 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 401 	mPC: 0x16 	PC: 0x124 	BUF: 0x1500000000 	AR: 0x124 	MC: 0x2200
+   	DataStack[264, 4 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 402 	mPC: 0x1 	PC: 0x125 	BUF: -0x4 	AR: 0x124 	MC: 0x9006
+   	DataStack[264, -4 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 403 	mPC: 0x2 	PC: 0x125 	BUF: -0x4 	AR: 0x125 	MC: 0x60
+   	DataStack[264, -4 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 404 	mPC: 0x26 	PC: 0x125 	BUF: 0x2600000128 	AR: 0x125 	MC: 0x410
+   	DataStack[264, -4 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 405 	mPC: 0x1 	PC: 0x126 	BUF: 0x2600000128 	AR: 0x125 	MC: 0x1800002
+   	DataStack[264, -4 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 406 	mPC: 0x2 	PC: 0x126 	BUF: 0x2600000128 	AR: 0x126 	MC: 0x60
+   	DataStack[264, -4 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 407 	mPC: 0x7 	PC: 0x126 	BUF: 0x700000000 	AR: 0x126 	MC: 0x410
+   	DataStack[264, -4 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 408 	mPC: 0x8 	PC: 0x126 	BUF: 0x700000000 	AR: 0x0 	MC: 0xa0
+   	DataStack[264, -4 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 409 	mPC: 0x1 	PC: 0x127 	BUF: 0x700000000 	AR: 0x0 	MC: 0xa02
+   	DataStack[264 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 410 	mPC: 0x2 	PC: 0x127 	BUF: 0x700000000 	AR: 0x127 	MC: 0x60
+   	DataStack[264 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 411 	mPC: 0x25 	PC: 0x127 	BUF: 0x2500000119 	AR: 0x127 	MC: 0x410
+   	DataStack[264 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 412 	mPC: 0x1 	PC: 0x119 	BUF: 0x2500000119 	AR: 0x127 	MC: 0x800002
+   	DataStack[264 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 413 	mPC: 0x2 	PC: 0x119 	BUF: 0x2500000119 	AR: 0x119 	MC: 0x60
+   	DataStack[264 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 414 	mPC: 0x23 	PC: 0x119 	BUF: 0x2300000000 	AR: 0x119 	MC: 0x410
+   	DataStack[264 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 415 	mPC: 0x24 	PC: 0x119 	BUF: 0x108 	AR: 0x119 	MC: 0x81100
+   	DataStack[264, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 416 	mPC: 0x1 	PC: 0x11a 	BUF: 0x108 	AR: 0x119 	MC: 0x6
+   	DataStack[264, 264 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 417 	mPC: 0x2 	PC: 0x11a 	BUF: 0x108 	AR: 0x11a 	MC: 0x60
+   	DataStack[264, 264 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 418 	mPC: 0x23 	PC: 0x11a 	BUF: 0x2300000000 	AR: 0x11a 	MC: 0x410
+   	DataStack[264, 264 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 419 	mPC: 0x24 	PC: 0x11a 	BUF: 0x108 	AR: 0x11a 	MC: 0x81100
+   	DataStack[264, 264, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 420 	mPC: 0x1 	PC: 0x11b 	BUF: 0x108 	AR: 0x11a 	MC: 0x6
+   	DataStack[264, 264, 264 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 421 	mPC: 0x2 	PC: 0x11b 	BUF: 0x108 	AR: 0x11b 	MC: 0x60
+   	DataStack[264, 264, 264 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 422 	mPC: 0x9 	PC: 0x11b 	BUF: 0x900000000 	AR: 0x11b 	MC: 0x410
+   	DataStack[264, 264, 264 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 423 	mPC: 0xa 	PC: 0x11b 	BUF: 0x108 	AR: 0x11b 	MC: 0x81000
+   	DataStack[264, 264, 264 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 424 	mPC: 0xb 	PC: 0x11b 	BUF: 0x108 	AR: 0x108 	MC: 0xa0
+   	DataStack[264, 264, 264 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 425 	mPC: 0x1 	PC: 0x11c 	BUF: 0x29a 	AR: 0x108 	MC: 0x406
+   	DataStack[264, 264, 666 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 426 	mPC: 0x2 	PC: 0x11c 	BUF: 0x29a 	AR: 0x11c 	MC: 0x60
+   	DataStack[264, 264, 666 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 427 	mPC: 0x28 	PC: 0x11c 	BUF: 0x280000010e 	AR: 0x11c 	MC: 0x410
+   	DataStack[264, 264, 666 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 428 	mPC: 0x1 	PC: 0x10e 	BUF: 0x280000010e 	AR: 0x11c 	MC: 0x4800002
+   	DataStack[264, 264, 666 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 429 	mPC: 0x2 	PC: 0x10e 	BUF: 0x280000010e 	AR: 0x10e 	MC: 0x60
+   	DataStack[264, 264, 666 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 430 	mPC: 0x23 	PC: 0x10e 	BUF: 0x2300000000 	AR: 0x10e 	MC: 0x410
+   	DataStack[264, 264, 666 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 431 	mPC: 0x24 	PC: 0x10e 	BUF: 0x29a 	AR: 0x10e 	MC: 0x81100
+   	DataStack[264, 264, 666, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 432 	mPC: 0x1 	PC: 0x10f 	BUF: 0x29a 	AR: 0x10e 	MC: 0x6
+   	DataStack[264, 264, 666, 666 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 433 	mPC: 0x2 	PC: 0x10f 	BUF: 0x29a 	AR: 0x10f 	MC: 0x60
+   	DataStack[264, 264, 666, 666 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 434 	mPC: 0x23 	PC: 0x10f 	BUF: 0x2300000000 	AR: 0x10f 	MC: 0x410
+   	DataStack[264, 264, 666, 666 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 435 	mPC: 0x24 	PC: 0x10f 	BUF: 0x29a 	AR: 0x10f 	MC: 0x81100
+   	DataStack[264, 264, 666, 666, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 436 	mPC: 0x1 	PC: 0x110 	BUF: 0x29a 	AR: 0x10f 	MC: 0x6
+   	DataStack[264, 264, 666, 666, 666 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 437 	mPC: 0x2 	PC: 0x110 	BUF: 0x29a 	AR: 0x110 	MC: 0x60
+   	DataStack[264, 264, 666, 666, 666 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 438 	mPC: 0x17 	PC: 0x110 	BUF: 0x1700000000 	AR: 0x110 	MC: 0x410
+   	DataStack[264, 264, 666, 666, 666 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 439 	mPC: 0x18 	PC: 0x110 	BUF: 0x1700000000 	AR: 0x110 	MC: 0x2200
+   	DataStack[264, 264, 666, 666 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 440 	mPC: 0x1 	PC: 0x111 	BUF: 0x6c4a4 	AR: 0x110 	MC: 0x11006
+   	DataStack[264, 264, 666, 443556 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 441 	mPC: 0x2 	PC: 0x111 	BUF: 0x6c4a4 	AR: 0x111 	MC: 0x60
+   	DataStack[264, 264, 666, 443556 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 442 	mPC: 0xf 	PC: 0x111 	BUF: 0xf00000000 	AR: 0x111 	MC: 0x410
+   	DataStack[264, 264, 666, 443556 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 443 	mPC: 0x10 	PC: 0x111 	BUF: 0x6c4a4 	AR: 0x111 	MC: 0x81200
+   	DataStack[264, 264, 666 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 444 	mPC: 0x11 	PC: 0x111 	BUF: 0x6c4a4 	AR: 0x111 	MC: 0x1004
+   	DataStack[264, 264, 443556 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 445 	mPC: 0x12 	PC: 0x111 	BUF: 0x29a 	AR: 0x111 	MC: 0x80100
+   	DataStack[264, 264, 443556, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 446 	mPC: 0x1 	PC: 0x112 	BUF: 0x29a 	AR: 0x111 	MC: 0x6
+   	DataStack[264, 264, 443556, 666 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 447 	mPC: 0x2 	PC: 0x112 	BUF: 0x29a 	AR: 0x112 	MC: 0x60
+   	DataStack[264, 264, 443556, 666 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 448 	mPC: 0x5 	PC: 0x112 	BUF: 0x580000002 	AR: 0x112 	MC: 0x410
+   	DataStack[264, 264, 443556, 666 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 449 	mPC: 0x6 	PC: 0x112 	BUF: 0x580000002 	AR: 0x80000002 	MC: 0x1a0
+   	DataStack[264, 264, 443556, 666, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 450 	mPC: 0x1 	PC: 0x113 	BUF: 0x2 	AR: 0x80000002 	MC: 0x406
+   	DataStack[264, 264, 443556, 666, 2 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 451 	mPC: 0x2 	PC: 0x113 	BUF: 0x2 	AR: 0x113 	MC: 0x60
+   	DataStack[264, 264, 443556, 666, 2 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 452 	mPC: 0x17 	PC: 0x113 	BUF: 0x1700000000 	AR: 0x113 	MC: 0x410
+   	DataStack[264, 264, 443556, 666, 2 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 453 	mPC: 0x18 	PC: 0x113 	BUF: 0x1700000000 	AR: 0x113 	MC: 0x2200
+   	DataStack[264, 264, 443556, 666 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 454 	mPC: 0x1 	PC: 0x114 	BUF: 0x534 	AR: 0x113 	MC: 0x11006
+   	DataStack[264, 264, 443556, 1332 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 455 	mPC: 0x2 	PC: 0x114 	BUF: 0x534 	AR: 0x114 	MC: 0x60
+   	DataStack[264, 264, 443556, 1332 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 456 	mPC: 0x5 	PC: 0x114 	BUF: 0x580000007 	AR: 0x114 	MC: 0x410
+   	DataStack[264, 264, 443556, 1332 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 457 	mPC: 0x6 	PC: 0x114 	BUF: 0x580000007 	AR: 0x80000007 	MC: 0x1a0
+   	DataStack[264, 264, 443556, 1332, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 458 	mPC: 0x1 	PC: 0x115 	BUF: 0x7 	AR: 0x80000007 	MC: 0x406
+   	DataStack[264, 264, 443556, 1332, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 459 	mPC: 0x2 	PC: 0x115 	BUF: 0x7 	AR: 0x115 	MC: 0x60
+   	DataStack[264, 264, 443556, 1332, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 460 	mPC: 0x15 	PC: 0x115 	BUF: 0x1500000000 	AR: 0x115 	MC: 0x410
+   	DataStack[264, 264, 443556, 1332, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 461 	mPC: 0x16 	PC: 0x115 	BUF: 0x1500000000 	AR: 0x115 	MC: 0x2200
+   	DataStack[264, 264, 443556, 1332 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 462 	mPC: 0x1 	PC: 0x116 	BUF: 0x52d 	AR: 0x115 	MC: 0x9006
+   	DataStack[264, 264, 443556, 1325 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 463 	mPC: 0x2 	PC: 0x116 	BUF: 0x52d 	AR: 0x116 	MC: 0x60
+   	DataStack[264, 264, 443556, 1325 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 464 	mPC: 0x13 	PC: 0x116 	BUF: 0x1300000000 	AR: 0x116 	MC: 0x410
+   	DataStack[264, 264, 443556, 1325 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 465 	mPC: 0x14 	PC: 0x116 	BUF: 0x1300000000 	AR: 0x116 	MC: 0x2200
+   	DataStack[264, 264, 443556 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 466 	mPC: 0x1 	PC: 0x117 	BUF: 0x6c9d1 	AR: 0x116 	MC: 0x5006
+   	DataStack[264, 264, 444881 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 467 	mPC: 0x2 	PC: 0x117 	BUF: 0x6c9d1 	AR: 0x117 	MC: 0x60
+   	DataStack[264, 264, 444881 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 468 	mPC: 0x29 	PC: 0x117 	BUF: 0x2900000000 	AR: 0x117 	MC: 0x410
+   	DataStack[264, 264, 444881 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 469 	mPC: 0x1 	PC: 0x11d 	BUF: 0x11d 	AR: 0x117 	MC: 0x8800002
+   	DataStack[264, 264, 444881 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 470 	mPC: 0x2 	PC: 0x11d 	BUF: 0x11d 	AR: 0x11d 	MC: 0x60
+   	DataStack[264, 264, 444881 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 471 	mPC: 0xf 	PC: 0x11d 	BUF: 0xf00000000 	AR: 0x11d 	MC: 0x410
+   	DataStack[264, 264, 444881 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 472 	mPC: 0x10 	PC: 0x11d 	BUF: 0x6c9d1 	AR: 0x11d 	MC: 0x81200
+   	DataStack[264, 264 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 473 	mPC: 0x11 	PC: 0x11d 	BUF: 0x6c9d1 	AR: 0x11d 	MC: 0x1004
+   	DataStack[264, 444881 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 474 	mPC: 0x12 	PC: 0x11d 	BUF: 0x108 	AR: 0x11d 	MC: 0x80100
+   	DataStack[264, 444881, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 475 	mPC: 0x1 	PC: 0x11e 	BUF: 0x108 	AR: 0x11d 	MC: 0x6
+   	DataStack[264, 444881, 264 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 476 	mPC: 0x2 	PC: 0x11e 	BUF: 0x108 	AR: 0x11e 	MC: 0x60
+   	DataStack[264, 444881, 264 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 477 	mPC: 0xc 	PC: 0x11e 	BUF: 0xc00000000 	AR: 0x11e 	MC: 0x410
+   	DataStack[264, 444881, 264 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 478 	mPC: 0xd 	PC: 0x11e 	BUF: 0x108 	AR: 0x11e 	MC: 0x81200
+   	DataStack[264, 444881 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 479 	mPC: 0xe 	PC: 0x11e 	BUF: 0x108 	AR: 0x108 	MC: 0xa0
+   	DataStack[264, 444881 <-]
+   	RetStack[ <-]
+  DEBUG   datapath:sig_mem_write MEM[264]: 666 -> 444881
+  DEBUG   machine:simulation     Tick: 480 	mPC: 0x1 	PC: 0x11f 	BUF: 0x108 	AR: 0x108 	MC: 0xa02
+   	DataStack[264 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 481 	mPC: 0x2 	PC: 0x11f 	BUF: 0x108 	AR: 0x11f 	MC: 0x60
+   	DataStack[264 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 482 	mPC: 0x1f 	PC: 0x11f 	BUF: 0x1f00000000 	AR: 0x11f 	MC: 0x410
+   	DataStack[264 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 483 	mPC: 0x20 	PC: 0x11f 	BUF: 0x109 	AR: 0x11f 	MC: 0x281000
+   	DataStack[264 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 484 	mPC: 0x1 	PC: 0x120 	BUF: 0x109 	AR: 0x11f 	MC: 0x6
+   	DataStack[265 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 485 	mPC: 0x2 	PC: 0x120 	BUF: 0x109 	AR: 0x120 	MC: 0x60
+   	DataStack[265 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 486 	mPC: 0x23 	PC: 0x120 	BUF: 0x2300000000 	AR: 0x120 	MC: 0x410
+   	DataStack[265 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 487 	mPC: 0x24 	PC: 0x120 	BUF: 0x109 	AR: 0x120 	MC: 0x81100
+   	DataStack[265, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 488 	mPC: 0x1 	PC: 0x121 	BUF: 0x109 	AR: 0x120 	MC: 0x6
+   	DataStack[265, 265 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 489 	mPC: 0x2 	PC: 0x121 	BUF: 0x109 	AR: 0x121 	MC: 0x60
+   	DataStack[265, 265 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 490 	mPC: 0x5 	PC: 0x121 	BUF: 0x50000010d 	AR: 0x121 	MC: 0x410
+   	DataStack[265, 265 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 491 	mPC: 0x6 	PC: 0x121 	BUF: 0x50000010d 	AR: 0x10d 	MC: 0x1a0
+   	DataStack[265, 265, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 492 	mPC: 0x1 	PC: 0x122 	BUF: 0x104 	AR: 0x10d 	MC: 0x406
+   	DataStack[265, 265, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 493 	mPC: 0x2 	PC: 0x122 	BUF: 0x104 	AR: 0x122 	MC: 0x60
+   	DataStack[265, 265, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 494 	mPC: 0x15 	PC: 0x122 	BUF: 0x1500000000 	AR: 0x122 	MC: 0x410
+   	DataStack[265, 265, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 495 	mPC: 0x16 	PC: 0x122 	BUF: 0x1500000000 	AR: 0x122 	MC: 0x2200
+   	DataStack[265, 265 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 496 	mPC: 0x1 	PC: 0x123 	BUF: 0x5 	AR: 0x122 	MC: 0x9006
+   	DataStack[265, 5 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 497 	mPC: 0x2 	PC: 0x123 	BUF: 0x5 	AR: 0x123 	MC: 0x60
+   	DataStack[265, 5 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 498 	mPC: 0x5 	PC: 0x123 	BUF: 0x50000010c 	AR: 0x123 	MC: 0x410
+   	DataStack[265, 5 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 499 	mPC: 0x6 	PC: 0x123 	BUF: 0x50000010c 	AR: 0x10c 	MC: 0x1a0
+   	DataStack[265, 5, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 500 	mPC: 0x1 	PC: 0x124 	BUF: 0x8 	AR: 0x10c 	MC: 0x406
+   	DataStack[265, 5, 8 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 501 	mPC: 0x2 	PC: 0x124 	BUF: 0x8 	AR: 0x124 	MC: 0x60
+   	DataStack[265, 5, 8 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 502 	mPC: 0x15 	PC: 0x124 	BUF: 0x1500000000 	AR: 0x124 	MC: 0x410
+   	DataStack[265, 5, 8 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 503 	mPC: 0x16 	PC: 0x124 	BUF: 0x1500000000 	AR: 0x124 	MC: 0x2200
+   	DataStack[265, 5 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 504 	mPC: 0x1 	PC: 0x125 	BUF: -0x3 	AR: 0x124 	MC: 0x9006
+   	DataStack[265, -3 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 505 	mPC: 0x2 	PC: 0x125 	BUF: -0x3 	AR: 0x125 	MC: 0x60
+   	DataStack[265, -3 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 506 	mPC: 0x26 	PC: 0x125 	BUF: 0x2600000128 	AR: 0x125 	MC: 0x410
+   	DataStack[265, -3 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 507 	mPC: 0x1 	PC: 0x126 	BUF: 0x2600000128 	AR: 0x125 	MC: 0x1800002
+   	DataStack[265, -3 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 508 	mPC: 0x2 	PC: 0x126 	BUF: 0x2600000128 	AR: 0x126 	MC: 0x60
+   	DataStack[265, -3 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 509 	mPC: 0x7 	PC: 0x126 	BUF: 0x700000000 	AR: 0x126 	MC: 0x410
+   	DataStack[265, -3 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 510 	mPC: 0x8 	PC: 0x126 	BUF: 0x700000000 	AR: 0x0 	MC: 0xa0
+   	DataStack[265, -3 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 511 	mPC: 0x1 	PC: 0x127 	BUF: 0x700000000 	AR: 0x0 	MC: 0xa02
+   	DataStack[265 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 512 	mPC: 0x2 	PC: 0x127 	BUF: 0x700000000 	AR: 0x127 	MC: 0x60
+   	DataStack[265 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 513 	mPC: 0x25 	PC: 0x127 	BUF: 0x2500000119 	AR: 0x127 	MC: 0x410
+   	DataStack[265 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 514 	mPC: 0x1 	PC: 0x119 	BUF: 0x2500000119 	AR: 0x127 	MC: 0x800002
+   	DataStack[265 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 515 	mPC: 0x2 	PC: 0x119 	BUF: 0x2500000119 	AR: 0x119 	MC: 0x60
+   	DataStack[265 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 516 	mPC: 0x23 	PC: 0x119 	BUF: 0x2300000000 	AR: 0x119 	MC: 0x410
+   	DataStack[265 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 517 	mPC: 0x24 	PC: 0x119 	BUF: 0x109 	AR: 0x119 	MC: 0x81100
+   	DataStack[265, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 518 	mPC: 0x1 	PC: 0x11a 	BUF: 0x109 	AR: 0x119 	MC: 0x6
+   	DataStack[265, 265 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 519 	mPC: 0x2 	PC: 0x11a 	BUF: 0x109 	AR: 0x11a 	MC: 0x60
+   	DataStack[265, 265 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 520 	mPC: 0x23 	PC: 0x11a 	BUF: 0x2300000000 	AR: 0x11a 	MC: 0x410
+   	DataStack[265, 265 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 521 	mPC: 0x24 	PC: 0x11a 	BUF: 0x109 	AR: 0x11a 	MC: 0x81100
+   	DataStack[265, 265, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 522 	mPC: 0x1 	PC: 0x11b 	BUF: 0x109 	AR: 0x11a 	MC: 0x6
+   	DataStack[265, 265, 265 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 523 	mPC: 0x2 	PC: 0x11b 	BUF: 0x109 	AR: 0x11b 	MC: 0x60
+   	DataStack[265, 265, 265 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 524 	mPC: 0x9 	PC: 0x11b 	BUF: 0x900000000 	AR: 0x11b 	MC: 0x410
+   	DataStack[265, 265, 265 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 525 	mPC: 0xa 	PC: 0x11b 	BUF: 0x109 	AR: 0x11b 	MC: 0x81000
+   	DataStack[265, 265, 265 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 526 	mPC: 0xb 	PC: 0x11b 	BUF: 0x109 	AR: 0x109 	MC: 0xa0
+   	DataStack[265, 265, 265 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 527 	mPC: 0x1 	PC: 0x11c 	BUF: 0x100 	AR: 0x109 	MC: 0x406
+   	DataStack[265, 265, 256 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 528 	mPC: 0x2 	PC: 0x11c 	BUF: 0x100 	AR: 0x11c 	MC: 0x60
+   	DataStack[265, 265, 256 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 529 	mPC: 0x28 	PC: 0x11c 	BUF: 0x280000010e 	AR: 0x11c 	MC: 0x410
+   	DataStack[265, 265, 256 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 530 	mPC: 0x1 	PC: 0x10e 	BUF: 0x280000010e 	AR: 0x11c 	MC: 0x4800002
+   	DataStack[265, 265, 256 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 531 	mPC: 0x2 	PC: 0x10e 	BUF: 0x280000010e 	AR: 0x10e 	MC: 0x60
+   	DataStack[265, 265, 256 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 532 	mPC: 0x23 	PC: 0x10e 	BUF: 0x2300000000 	AR: 0x10e 	MC: 0x410
+   	DataStack[265, 265, 256 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 533 	mPC: 0x24 	PC: 0x10e 	BUF: 0x100 	AR: 0x10e 	MC: 0x81100
+   	DataStack[265, 265, 256, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 534 	mPC: 0x1 	PC: 0x10f 	BUF: 0x100 	AR: 0x10e 	MC: 0x6
+   	DataStack[265, 265, 256, 256 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 535 	mPC: 0x2 	PC: 0x10f 	BUF: 0x100 	AR: 0x10f 	MC: 0x60
+   	DataStack[265, 265, 256, 256 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 536 	mPC: 0x23 	PC: 0x10f 	BUF: 0x2300000000 	AR: 0x10f 	MC: 0x410
+   	DataStack[265, 265, 256, 256 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 537 	mPC: 0x24 	PC: 0x10f 	BUF: 0x100 	AR: 0x10f 	MC: 0x81100
+   	DataStack[265, 265, 256, 256, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 538 	mPC: 0x1 	PC: 0x110 	BUF: 0x100 	AR: 0x10f 	MC: 0x6
+   	DataStack[265, 265, 256, 256, 256 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 539 	mPC: 0x2 	PC: 0x110 	BUF: 0x100 	AR: 0x110 	MC: 0x60
+   	DataStack[265, 265, 256, 256, 256 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 540 	mPC: 0x17 	PC: 0x110 	BUF: 0x1700000000 	AR: 0x110 	MC: 0x410
+   	DataStack[265, 265, 256, 256, 256 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 541 	mPC: 0x18 	PC: 0x110 	BUF: 0x1700000000 	AR: 0x110 	MC: 0x2200
+   	DataStack[265, 265, 256, 256 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 542 	mPC: 0x1 	PC: 0x111 	BUF: 0x10000 	AR: 0x110 	MC: 0x11006
+   	DataStack[265, 265, 256, 65536 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 543 	mPC: 0x2 	PC: 0x111 	BUF: 0x10000 	AR: 0x111 	MC: 0x60
+   	DataStack[265, 265, 256, 65536 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 544 	mPC: 0xf 	PC: 0x111 	BUF: 0xf00000000 	AR: 0x111 	MC: 0x410
+   	DataStack[265, 265, 256, 65536 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 545 	mPC: 0x10 	PC: 0x111 	BUF: 0x10000 	AR: 0x111 	MC: 0x81200
+   	DataStack[265, 265, 256 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 546 	mPC: 0x11 	PC: 0x111 	BUF: 0x10000 	AR: 0x111 	MC: 0x1004
+   	DataStack[265, 265, 65536 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 547 	mPC: 0x12 	PC: 0x111 	BUF: 0x100 	AR: 0x111 	MC: 0x80100
+   	DataStack[265, 265, 65536, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 548 	mPC: 0x1 	PC: 0x112 	BUF: 0x100 	AR: 0x111 	MC: 0x6
+   	DataStack[265, 265, 65536, 256 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 549 	mPC: 0x2 	PC: 0x112 	BUF: 0x100 	AR: 0x112 	MC: 0x60
+   	DataStack[265, 265, 65536, 256 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 550 	mPC: 0x5 	PC: 0x112 	BUF: 0x580000002 	AR: 0x112 	MC: 0x410
+   	DataStack[265, 265, 65536, 256 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 551 	mPC: 0x6 	PC: 0x112 	BUF: 0x580000002 	AR: 0x80000002 	MC: 0x1a0
+   	DataStack[265, 265, 65536, 256, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 552 	mPC: 0x1 	PC: 0x113 	BUF: 0x2 	AR: 0x80000002 	MC: 0x406
+   	DataStack[265, 265, 65536, 256, 2 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 553 	mPC: 0x2 	PC: 0x113 	BUF: 0x2 	AR: 0x113 	MC: 0x60
+   	DataStack[265, 265, 65536, 256, 2 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 554 	mPC: 0x17 	PC: 0x113 	BUF: 0x1700000000 	AR: 0x113 	MC: 0x410
+   	DataStack[265, 265, 65536, 256, 2 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 555 	mPC: 0x18 	PC: 0x113 	BUF: 0x1700000000 	AR: 0x113 	MC: 0x2200
+   	DataStack[265, 265, 65536, 256 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 556 	mPC: 0x1 	PC: 0x114 	BUF: 0x200 	AR: 0x113 	MC: 0x11006
+   	DataStack[265, 265, 65536, 512 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 557 	mPC: 0x2 	PC: 0x114 	BUF: 0x200 	AR: 0x114 	MC: 0x60
+   	DataStack[265, 265, 65536, 512 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 558 	mPC: 0x5 	PC: 0x114 	BUF: 0x580000007 	AR: 0x114 	MC: 0x410
+   	DataStack[265, 265, 65536, 512 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 559 	mPC: 0x6 	PC: 0x114 	BUF: 0x580000007 	AR: 0x80000007 	MC: 0x1a0
+   	DataStack[265, 265, 65536, 512, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 560 	mPC: 0x1 	PC: 0x115 	BUF: 0x7 	AR: 0x80000007 	MC: 0x406
+   	DataStack[265, 265, 65536, 512, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 561 	mPC: 0x2 	PC: 0x115 	BUF: 0x7 	AR: 0x115 	MC: 0x60
+   	DataStack[265, 265, 65536, 512, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 562 	mPC: 0x15 	PC: 0x115 	BUF: 0x1500000000 	AR: 0x115 	MC: 0x410
+   	DataStack[265, 265, 65536, 512, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 563 	mPC: 0x16 	PC: 0x115 	BUF: 0x1500000000 	AR: 0x115 	MC: 0x2200
+   	DataStack[265, 265, 65536, 512 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 564 	mPC: 0x1 	PC: 0x116 	BUF: 0x1f9 	AR: 0x115 	MC: 0x9006
+   	DataStack[265, 265, 65536, 505 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 565 	mPC: 0x2 	PC: 0x116 	BUF: 0x1f9 	AR: 0x116 	MC: 0x60
+   	DataStack[265, 265, 65536, 505 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 566 	mPC: 0x13 	PC: 0x116 	BUF: 0x1300000000 	AR: 0x116 	MC: 0x410
+   	DataStack[265, 265, 65536, 505 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 567 	mPC: 0x14 	PC: 0x116 	BUF: 0x1300000000 	AR: 0x116 	MC: 0x2200
+   	DataStack[265, 265, 65536 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 568 	mPC: 0x1 	PC: 0x117 	BUF: 0x101f9 	AR: 0x116 	MC: 0x5006
+   	DataStack[265, 265, 66041 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 569 	mPC: 0x2 	PC: 0x117 	BUF: 0x101f9 	AR: 0x117 	MC: 0x60
+   	DataStack[265, 265, 66041 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 570 	mPC: 0x29 	PC: 0x117 	BUF: 0x2900000000 	AR: 0x117 	MC: 0x410
+   	DataStack[265, 265, 66041 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 571 	mPC: 0x1 	PC: 0x11d 	BUF: 0x11d 	AR: 0x117 	MC: 0x8800002
+   	DataStack[265, 265, 66041 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 572 	mPC: 0x2 	PC: 0x11d 	BUF: 0x11d 	AR: 0x11d 	MC: 0x60
+   	DataStack[265, 265, 66041 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 573 	mPC: 0xf 	PC: 0x11d 	BUF: 0xf00000000 	AR: 0x11d 	MC: 0x410
+   	DataStack[265, 265, 66041 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 574 	mPC: 0x10 	PC: 0x11d 	BUF: 0x101f9 	AR: 0x11d 	MC: 0x81200
+   	DataStack[265, 265 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 575 	mPC: 0x11 	PC: 0x11d 	BUF: 0x101f9 	AR: 0x11d 	MC: 0x1004
+   	DataStack[265, 66041 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 576 	mPC: 0x12 	PC: 0x11d 	BUF: 0x109 	AR: 0x11d 	MC: 0x80100
+   	DataStack[265, 66041, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 577 	mPC: 0x1 	PC: 0x11e 	BUF: 0x109 	AR: 0x11d 	MC: 0x6
+   	DataStack[265, 66041, 265 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 578 	mPC: 0x2 	PC: 0x11e 	BUF: 0x109 	AR: 0x11e 	MC: 0x60
+   	DataStack[265, 66041, 265 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 579 	mPC: 0xc 	PC: 0x11e 	BUF: 0xc00000000 	AR: 0x11e 	MC: 0x410
+   	DataStack[265, 66041, 265 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 580 	mPC: 0xd 	PC: 0x11e 	BUF: 0x109 	AR: 0x11e 	MC: 0x81200
+   	DataStack[265, 66041 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 581 	mPC: 0xe 	PC: 0x11e 	BUF: 0x109 	AR: 0x109 	MC: 0xa0
+   	DataStack[265, 66041 <-]
+   	RetStack[ <-]
+  DEBUG   datapath:sig_mem_write MEM[265]: 256 -> 66041
+  DEBUG   machine:simulation     Tick: 582 	mPC: 0x1 	PC: 0x11f 	BUF: 0x109 	AR: 0x109 	MC: 0xa02
+   	DataStack[265 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 583 	mPC: 0x2 	PC: 0x11f 	BUF: 0x109 	AR: 0x11f 	MC: 0x60
+   	DataStack[265 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 584 	mPC: 0x1f 	PC: 0x11f 	BUF: 0x1f00000000 	AR: 0x11f 	MC: 0x410
+   	DataStack[265 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 585 	mPC: 0x20 	PC: 0x11f 	BUF: 0x10a 	AR: 0x11f 	MC: 0x281000
+   	DataStack[265 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 586 	mPC: 0x1 	PC: 0x120 	BUF: 0x10a 	AR: 0x11f 	MC: 0x6
+   	DataStack[266 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 587 	mPC: 0x2 	PC: 0x120 	BUF: 0x10a 	AR: 0x120 	MC: 0x60
+   	DataStack[266 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 588 	mPC: 0x23 	PC: 0x120 	BUF: 0x2300000000 	AR: 0x120 	MC: 0x410
+   	DataStack[266 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 589 	mPC: 0x24 	PC: 0x120 	BUF: 0x10a 	AR: 0x120 	MC: 0x81100
+   	DataStack[266, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 590 	mPC: 0x1 	PC: 0x121 	BUF: 0x10a 	AR: 0x120 	MC: 0x6
+   	DataStack[266, 266 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 591 	mPC: 0x2 	PC: 0x121 	BUF: 0x10a 	AR: 0x121 	MC: 0x60
+   	DataStack[266, 266 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 592 	mPC: 0x5 	PC: 0x121 	BUF: 0x50000010d 	AR: 0x121 	MC: 0x410
+   	DataStack[266, 266 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 593 	mPC: 0x6 	PC: 0x121 	BUF: 0x50000010d 	AR: 0x10d 	MC: 0x1a0
+   	DataStack[266, 266, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 594 	mPC: 0x1 	PC: 0x122 	BUF: 0x104 	AR: 0x10d 	MC: 0x406
+   	DataStack[266, 266, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 595 	mPC: 0x2 	PC: 0x122 	BUF: 0x104 	AR: 0x122 	MC: 0x60
+   	DataStack[266, 266, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 596 	mPC: 0x15 	PC: 0x122 	BUF: 0x1500000000 	AR: 0x122 	MC: 0x410
+   	DataStack[266, 266, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 597 	mPC: 0x16 	PC: 0x122 	BUF: 0x1500000000 	AR: 0x122 	MC: 0x2200
+   	DataStack[266, 266 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 598 	mPC: 0x1 	PC: 0x123 	BUF: 0x6 	AR: 0x122 	MC: 0x9006
+   	DataStack[266, 6 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 599 	mPC: 0x2 	PC: 0x123 	BUF: 0x6 	AR: 0x123 	MC: 0x60
+   	DataStack[266, 6 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 600 	mPC: 0x5 	PC: 0x123 	BUF: 0x50000010c 	AR: 0x123 	MC: 0x410
+   	DataStack[266, 6 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 601 	mPC: 0x6 	PC: 0x123 	BUF: 0x50000010c 	AR: 0x10c 	MC: 0x1a0
+   	DataStack[266, 6, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 602 	mPC: 0x1 	PC: 0x124 	BUF: 0x8 	AR: 0x10c 	MC: 0x406
+   	DataStack[266, 6, 8 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 603 	mPC: 0x2 	PC: 0x124 	BUF: 0x8 	AR: 0x124 	MC: 0x60
+   	DataStack[266, 6, 8 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 604 	mPC: 0x15 	PC: 0x124 	BUF: 0x1500000000 	AR: 0x124 	MC: 0x410
+   	DataStack[266, 6, 8 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 605 	mPC: 0x16 	PC: 0x124 	BUF: 0x1500000000 	AR: 0x124 	MC: 0x2200
+   	DataStack[266, 6 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 606 	mPC: 0x1 	PC: 0x125 	BUF: -0x2 	AR: 0x124 	MC: 0x9006
+   	DataStack[266, -2 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 607 	mPC: 0x2 	PC: 0x125 	BUF: -0x2 	AR: 0x125 	MC: 0x60
+   	DataStack[266, -2 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 608 	mPC: 0x26 	PC: 0x125 	BUF: 0x2600000128 	AR: 0x125 	MC: 0x410
+   	DataStack[266, -2 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 609 	mPC: 0x1 	PC: 0x126 	BUF: 0x2600000128 	AR: 0x125 	MC: 0x1800002
+   	DataStack[266, -2 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 610 	mPC: 0x2 	PC: 0x126 	BUF: 0x2600000128 	AR: 0x126 	MC: 0x60
+   	DataStack[266, -2 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 611 	mPC: 0x7 	PC: 0x126 	BUF: 0x700000000 	AR: 0x126 	MC: 0x410
+   	DataStack[266, -2 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 612 	mPC: 0x8 	PC: 0x126 	BUF: 0x700000000 	AR: 0x0 	MC: 0xa0
+   	DataStack[266, -2 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 613 	mPC: 0x1 	PC: 0x127 	BUF: 0x700000000 	AR: 0x0 	MC: 0xa02
+   	DataStack[266 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 614 	mPC: 0x2 	PC: 0x127 	BUF: 0x700000000 	AR: 0x127 	MC: 0x60
+   	DataStack[266 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 615 	mPC: 0x25 	PC: 0x127 	BUF: 0x2500000119 	AR: 0x127 	MC: 0x410
+   	DataStack[266 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 616 	mPC: 0x1 	PC: 0x119 	BUF: 0x2500000119 	AR: 0x127 	MC: 0x800002
+   	DataStack[266 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 617 	mPC: 0x2 	PC: 0x119 	BUF: 0x2500000119 	AR: 0x119 	MC: 0x60
+   	DataStack[266 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 618 	mPC: 0x23 	PC: 0x119 	BUF: 0x2300000000 	AR: 0x119 	MC: 0x410
+   	DataStack[266 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 619 	mPC: 0x24 	PC: 0x119 	BUF: 0x10a 	AR: 0x119 	MC: 0x81100
+   	DataStack[266, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 620 	mPC: 0x1 	PC: 0x11a 	BUF: 0x10a 	AR: 0x119 	MC: 0x6
+   	DataStack[266, 266 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 621 	mPC: 0x2 	PC: 0x11a 	BUF: 0x10a 	AR: 0x11a 	MC: 0x60
+   	DataStack[266, 266 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 622 	mPC: 0x23 	PC: 0x11a 	BUF: 0x2300000000 	AR: 0x11a 	MC: 0x410
+   	DataStack[266, 266 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 623 	mPC: 0x24 	PC: 0x11a 	BUF: 0x10a 	AR: 0x11a 	MC: 0x81100
+   	DataStack[266, 266, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 624 	mPC: 0x1 	PC: 0x11b 	BUF: 0x10a 	AR: 0x11a 	MC: 0x6
+   	DataStack[266, 266, 266 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 625 	mPC: 0x2 	PC: 0x11b 	BUF: 0x10a 	AR: 0x11b 	MC: 0x60
+   	DataStack[266, 266, 266 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 626 	mPC: 0x9 	PC: 0x11b 	BUF: 0x900000000 	AR: 0x11b 	MC: 0x410
+   	DataStack[266, 266, 266 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 627 	mPC: 0xa 	PC: 0x11b 	BUF: 0x10a 	AR: 0x11b 	MC: 0x81000
+   	DataStack[266, 266, 266 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 628 	mPC: 0xb 	PC: 0x11b 	BUF: 0x10a 	AR: 0x10a 	MC: 0xa0
+   	DataStack[266, 266, 266 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 629 	mPC: 0x1 	PC: 0x11c 	BUF: 0x41 	AR: 0x10a 	MC: 0x406
+   	DataStack[266, 266, 65 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 630 	mPC: 0x2 	PC: 0x11c 	BUF: 0x41 	AR: 0x11c 	MC: 0x60
+   	DataStack[266, 266, 65 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 631 	mPC: 0x28 	PC: 0x11c 	BUF: 0x280000010e 	AR: 0x11c 	MC: 0x410
+   	DataStack[266, 266, 65 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 632 	mPC: 0x1 	PC: 0x10e 	BUF: 0x280000010e 	AR: 0x11c 	MC: 0x4800002
+   	DataStack[266, 266, 65 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 633 	mPC: 0x2 	PC: 0x10e 	BUF: 0x280000010e 	AR: 0x10e 	MC: 0x60
+   	DataStack[266, 266, 65 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 634 	mPC: 0x23 	PC: 0x10e 	BUF: 0x2300000000 	AR: 0x10e 	MC: 0x410
+   	DataStack[266, 266, 65 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 635 	mPC: 0x24 	PC: 0x10e 	BUF: 0x41 	AR: 0x10e 	MC: 0x81100
+   	DataStack[266, 266, 65, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 636 	mPC: 0x1 	PC: 0x10f 	BUF: 0x41 	AR: 0x10e 	MC: 0x6
+   	DataStack[266, 266, 65, 65 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 637 	mPC: 0x2 	PC: 0x10f 	BUF: 0x41 	AR: 0x10f 	MC: 0x60
+   	DataStack[266, 266, 65, 65 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 638 	mPC: 0x23 	PC: 0x10f 	BUF: 0x2300000000 	AR: 0x10f 	MC: 0x410
+   	DataStack[266, 266, 65, 65 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 639 	mPC: 0x24 	PC: 0x10f 	BUF: 0x41 	AR: 0x10f 	MC: 0x81100
+   	DataStack[266, 266, 65, 65, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 640 	mPC: 0x1 	PC: 0x110 	BUF: 0x41 	AR: 0x10f 	MC: 0x6
+   	DataStack[266, 266, 65, 65, 65 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 641 	mPC: 0x2 	PC: 0x110 	BUF: 0x41 	AR: 0x110 	MC: 0x60
+   	DataStack[266, 266, 65, 65, 65 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 642 	mPC: 0x17 	PC: 0x110 	BUF: 0x1700000000 	AR: 0x110 	MC: 0x410
+   	DataStack[266, 266, 65, 65, 65 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 643 	mPC: 0x18 	PC: 0x110 	BUF: 0x1700000000 	AR: 0x110 	MC: 0x2200
+   	DataStack[266, 266, 65, 65 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 644 	mPC: 0x1 	PC: 0x111 	BUF: 0x1081 	AR: 0x110 	MC: 0x11006
+   	DataStack[266, 266, 65, 4225 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 645 	mPC: 0x2 	PC: 0x111 	BUF: 0x1081 	AR: 0x111 	MC: 0x60
+   	DataStack[266, 266, 65, 4225 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 646 	mPC: 0xf 	PC: 0x111 	BUF: 0xf00000000 	AR: 0x111 	MC: 0x410
+   	DataStack[266, 266, 65, 4225 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 647 	mPC: 0x10 	PC: 0x111 	BUF: 0x1081 	AR: 0x111 	MC: 0x81200
+   	DataStack[266, 266, 65 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 648 	mPC: 0x11 	PC: 0x111 	BUF: 0x1081 	AR: 0x111 	MC: 0x1004
+   	DataStack[266, 266, 4225 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 649 	mPC: 0x12 	PC: 0x111 	BUF: 0x41 	AR: 0x111 	MC: 0x80100
+   	DataStack[266, 266, 4225, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 650 	mPC: 0x1 	PC: 0x112 	BUF: 0x41 	AR: 0x111 	MC: 0x6
+   	DataStack[266, 266, 4225, 65 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 651 	mPC: 0x2 	PC: 0x112 	BUF: 0x41 	AR: 0x112 	MC: 0x60
+   	DataStack[266, 266, 4225, 65 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 652 	mPC: 0x5 	PC: 0x112 	BUF: 0x580000002 	AR: 0x112 	MC: 0x410
+   	DataStack[266, 266, 4225, 65 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 653 	mPC: 0x6 	PC: 0x112 	BUF: 0x580000002 	AR: 0x80000002 	MC: 0x1a0
+   	DataStack[266, 266, 4225, 65, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 654 	mPC: 0x1 	PC: 0x113 	BUF: 0x2 	AR: 0x80000002 	MC: 0x406
+   	DataStack[266, 266, 4225, 65, 2 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 655 	mPC: 0x2 	PC: 0x113 	BUF: 0x2 	AR: 0x113 	MC: 0x60
+   	DataStack[266, 266, 4225, 65, 2 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 656 	mPC: 0x17 	PC: 0x113 	BUF: 0x1700000000 	AR: 0x113 	MC: 0x410
+   	DataStack[266, 266, 4225, 65, 2 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 657 	mPC: 0x18 	PC: 0x113 	BUF: 0x1700000000 	AR: 0x113 	MC: 0x2200
+   	DataStack[266, 266, 4225, 65 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 658 	mPC: 0x1 	PC: 0x114 	BUF: 0x82 	AR: 0x113 	MC: 0x11006
+   	DataStack[266, 266, 4225, 130 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 659 	mPC: 0x2 	PC: 0x114 	BUF: 0x82 	AR: 0x114 	MC: 0x60
+   	DataStack[266, 266, 4225, 130 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 660 	mPC: 0x5 	PC: 0x114 	BUF: 0x580000007 	AR: 0x114 	MC: 0x410
+   	DataStack[266, 266, 4225, 130 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 661 	mPC: 0x6 	PC: 0x114 	BUF: 0x580000007 	AR: 0x80000007 	MC: 0x1a0
+   	DataStack[266, 266, 4225, 130, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 662 	mPC: 0x1 	PC: 0x115 	BUF: 0x7 	AR: 0x80000007 	MC: 0x406
+   	DataStack[266, 266, 4225, 130, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 663 	mPC: 0x2 	PC: 0x115 	BUF: 0x7 	AR: 0x115 	MC: 0x60
+   	DataStack[266, 266, 4225, 130, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 664 	mPC: 0x15 	PC: 0x115 	BUF: 0x1500000000 	AR: 0x115 	MC: 0x410
+   	DataStack[266, 266, 4225, 130, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 665 	mPC: 0x16 	PC: 0x115 	BUF: 0x1500000000 	AR: 0x115 	MC: 0x2200
+   	DataStack[266, 266, 4225, 130 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 666 	mPC: 0x1 	PC: 0x116 	BUF: 0x7b 	AR: 0x115 	MC: 0x9006
+   	DataStack[266, 266, 4225, 123 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 667 	mPC: 0x2 	PC: 0x116 	BUF: 0x7b 	AR: 0x116 	MC: 0x60
+   	DataStack[266, 266, 4225, 123 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 668 	mPC: 0x13 	PC: 0x116 	BUF: 0x1300000000 	AR: 0x116 	MC: 0x410
+   	DataStack[266, 266, 4225, 123 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 669 	mPC: 0x14 	PC: 0x116 	BUF: 0x1300000000 	AR: 0x116 	MC: 0x2200
+   	DataStack[266, 266, 4225 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 670 	mPC: 0x1 	PC: 0x117 	BUF: 0x10fc 	AR: 0x116 	MC: 0x5006
+   	DataStack[266, 266, 4348 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 671 	mPC: 0x2 	PC: 0x117 	BUF: 0x10fc 	AR: 0x117 	MC: 0x60
+   	DataStack[266, 266, 4348 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 672 	mPC: 0x29 	PC: 0x117 	BUF: 0x2900000000 	AR: 0x117 	MC: 0x410
+   	DataStack[266, 266, 4348 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 673 	mPC: 0x1 	PC: 0x11d 	BUF: 0x11d 	AR: 0x117 	MC: 0x8800002
+   	DataStack[266, 266, 4348 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 674 	mPC: 0x2 	PC: 0x11d 	BUF: 0x11d 	AR: 0x11d 	MC: 0x60
+   	DataStack[266, 266, 4348 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 675 	mPC: 0xf 	PC: 0x11d 	BUF: 0xf00000000 	AR: 0x11d 	MC: 0x410
+   	DataStack[266, 266, 4348 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 676 	mPC: 0x10 	PC: 0x11d 	BUF: 0x10fc 	AR: 0x11d 	MC: 0x81200
+   	DataStack[266, 266 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 677 	mPC: 0x11 	PC: 0x11d 	BUF: 0x10fc 	AR: 0x11d 	MC: 0x1004
+   	DataStack[266, 4348 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 678 	mPC: 0x12 	PC: 0x11d 	BUF: 0x10a 	AR: 0x11d 	MC: 0x80100
+   	DataStack[266, 4348, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 679 	mPC: 0x1 	PC: 0x11e 	BUF: 0x10a 	AR: 0x11d 	MC: 0x6
+   	DataStack[266, 4348, 266 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 680 	mPC: 0x2 	PC: 0x11e 	BUF: 0x10a 	AR: 0x11e 	MC: 0x60
+   	DataStack[266, 4348, 266 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 681 	mPC: 0xc 	PC: 0x11e 	BUF: 0xc00000000 	AR: 0x11e 	MC: 0x410
+   	DataStack[266, 4348, 266 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 682 	mPC: 0xd 	PC: 0x11e 	BUF: 0x10a 	AR: 0x11e 	MC: 0x81200
+   	DataStack[266, 4348 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 683 	mPC: 0xe 	PC: 0x11e 	BUF: 0x10a 	AR: 0x10a 	MC: 0xa0
+   	DataStack[266, 4348 <-]
+   	RetStack[ <-]
+  DEBUG   datapath:sig_mem_write MEM[266]: 65 -> 4348
+  DEBUG   machine:simulation     Tick: 684 	mPC: 0x1 	PC: 0x11f 	BUF: 0x10a 	AR: 0x10a 	MC: 0xa02
+   	DataStack[266 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 685 	mPC: 0x2 	PC: 0x11f 	BUF: 0x10a 	AR: 0x11f 	MC: 0x60
+   	DataStack[266 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 686 	mPC: 0x1f 	PC: 0x11f 	BUF: 0x1f00000000 	AR: 0x11f 	MC: 0x410
+   	DataStack[266 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 687 	mPC: 0x20 	PC: 0x11f 	BUF: 0x10b 	AR: 0x11f 	MC: 0x281000
+   	DataStack[266 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 688 	mPC: 0x1 	PC: 0x120 	BUF: 0x10b 	AR: 0x11f 	MC: 0x6
+   	DataStack[267 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 689 	mPC: 0x2 	PC: 0x120 	BUF: 0x10b 	AR: 0x120 	MC: 0x60
+   	DataStack[267 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 690 	mPC: 0x23 	PC: 0x120 	BUF: 0x2300000000 	AR: 0x120 	MC: 0x410
+   	DataStack[267 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 691 	mPC: 0x24 	PC: 0x120 	BUF: 0x10b 	AR: 0x120 	MC: 0x81100
+   	DataStack[267, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 692 	mPC: 0x1 	PC: 0x121 	BUF: 0x10b 	AR: 0x120 	MC: 0x6
+   	DataStack[267, 267 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 693 	mPC: 0x2 	PC: 0x121 	BUF: 0x10b 	AR: 0x121 	MC: 0x60
+   	DataStack[267, 267 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 694 	mPC: 0x5 	PC: 0x121 	BUF: 0x50000010d 	AR: 0x121 	MC: 0x410
+   	DataStack[267, 267 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 695 	mPC: 0x6 	PC: 0x121 	BUF: 0x50000010d 	AR: 0x10d 	MC: 0x1a0
+   	DataStack[267, 267, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 696 	mPC: 0x1 	PC: 0x122 	BUF: 0x104 	AR: 0x10d 	MC: 0x406
+   	DataStack[267, 267, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 697 	mPC: 0x2 	PC: 0x122 	BUF: 0x104 	AR: 0x122 	MC: 0x60
+   	DataStack[267, 267, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 698 	mPC: 0x15 	PC: 0x122 	BUF: 0x1500000000 	AR: 0x122 	MC: 0x410
+   	DataStack[267, 267, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 699 	mPC: 0x16 	PC: 0x122 	BUF: 0x1500000000 	AR: 0x122 	MC: 0x2200
+   	DataStack[267, 267 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 700 	mPC: 0x1 	PC: 0x123 	BUF: 0x7 	AR: 0x122 	MC: 0x9006
+   	DataStack[267, 7 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 701 	mPC: 0x2 	PC: 0x123 	BUF: 0x7 	AR: 0x123 	MC: 0x60
+   	DataStack[267, 7 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 702 	mPC: 0x5 	PC: 0x123 	BUF: 0x50000010c 	AR: 0x123 	MC: 0x410
+   	DataStack[267, 7 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 703 	mPC: 0x6 	PC: 0x123 	BUF: 0x50000010c 	AR: 0x10c 	MC: 0x1a0
+   	DataStack[267, 7, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 704 	mPC: 0x1 	PC: 0x124 	BUF: 0x8 	AR: 0x10c 	MC: 0x406
+   	DataStack[267, 7, 8 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 705 	mPC: 0x2 	PC: 0x124 	BUF: 0x8 	AR: 0x124 	MC: 0x60
+   	DataStack[267, 7, 8 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 706 	mPC: 0x15 	PC: 0x124 	BUF: 0x1500000000 	AR: 0x124 	MC: 0x410
+   	DataStack[267, 7, 8 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 707 	mPC: 0x16 	PC: 0x124 	BUF: 0x1500000000 	AR: 0x124 	MC: 0x2200
+   	DataStack[267, 7 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 708 	mPC: 0x1 	PC: 0x125 	BUF: -0x1 	AR: 0x124 	MC: 0x9006
+   	DataStack[267, -1 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 709 	mPC: 0x2 	PC: 0x125 	BUF: -0x1 	AR: 0x125 	MC: 0x60
+   	DataStack[267, -1 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 710 	mPC: 0x26 	PC: 0x125 	BUF: 0x2600000128 	AR: 0x125 	MC: 0x410
+   	DataStack[267, -1 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 711 	mPC: 0x1 	PC: 0x126 	BUF: 0x2600000128 	AR: 0x125 	MC: 0x1800002
+   	DataStack[267, -1 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 712 	mPC: 0x2 	PC: 0x126 	BUF: 0x2600000128 	AR: 0x126 	MC: 0x60
+   	DataStack[267, -1 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 713 	mPC: 0x7 	PC: 0x126 	BUF: 0x700000000 	AR: 0x126 	MC: 0x410
+   	DataStack[267, -1 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 714 	mPC: 0x8 	PC: 0x126 	BUF: 0x700000000 	AR: 0x0 	MC: 0xa0
+   	DataStack[267, -1 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 715 	mPC: 0x1 	PC: 0x127 	BUF: 0x700000000 	AR: 0x0 	MC: 0xa02
+   	DataStack[267 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 716 	mPC: 0x2 	PC: 0x127 	BUF: 0x700000000 	AR: 0x127 	MC: 0x60
+   	DataStack[267 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 717 	mPC: 0x25 	PC: 0x127 	BUF: 0x2500000119 	AR: 0x127 	MC: 0x410
+   	DataStack[267 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 718 	mPC: 0x1 	PC: 0x119 	BUF: 0x2500000119 	AR: 0x127 	MC: 0x800002
+   	DataStack[267 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 719 	mPC: 0x2 	PC: 0x119 	BUF: 0x2500000119 	AR: 0x119 	MC: 0x60
+   	DataStack[267 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 720 	mPC: 0x23 	PC: 0x119 	BUF: 0x2300000000 	AR: 0x119 	MC: 0x410
+   	DataStack[267 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 721 	mPC: 0x24 	PC: 0x119 	BUF: 0x10b 	AR: 0x119 	MC: 0x81100
+   	DataStack[267, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 722 	mPC: 0x1 	PC: 0x11a 	BUF: 0x10b 	AR: 0x119 	MC: 0x6
+   	DataStack[267, 267 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 723 	mPC: 0x2 	PC: 0x11a 	BUF: 0x10b 	AR: 0x11a 	MC: 0x60
+   	DataStack[267, 267 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 724 	mPC: 0x23 	PC: 0x11a 	BUF: 0x2300000000 	AR: 0x11a 	MC: 0x410
+   	DataStack[267, 267 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 725 	mPC: 0x24 	PC: 0x11a 	BUF: 0x10b 	AR: 0x11a 	MC: 0x81100
+   	DataStack[267, 267, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 726 	mPC: 0x1 	PC: 0x11b 	BUF: 0x10b 	AR: 0x11a 	MC: 0x6
+   	DataStack[267, 267, 267 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 727 	mPC: 0x2 	PC: 0x11b 	BUF: 0x10b 	AR: 0x11b 	MC: 0x60
+   	DataStack[267, 267, 267 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 728 	mPC: 0x9 	PC: 0x11b 	BUF: 0x900000000 	AR: 0x11b 	MC: 0x410
+   	DataStack[267, 267, 267 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 729 	mPC: 0xa 	PC: 0x11b 	BUF: 0x10b 	AR: 0x11b 	MC: 0x81000
+   	DataStack[267, 267, 267 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 730 	mPC: 0xb 	PC: 0x11b 	BUF: 0x10b 	AR: 0x10b 	MC: 0xa0
+   	DataStack[267, 267, 267 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 731 	mPC: 0x1 	PC: 0x11c 	BUF: 0x42 	AR: 0x10b 	MC: 0x406
+   	DataStack[267, 267, 66 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 732 	mPC: 0x2 	PC: 0x11c 	BUF: 0x42 	AR: 0x11c 	MC: 0x60
+   	DataStack[267, 267, 66 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 733 	mPC: 0x28 	PC: 0x11c 	BUF: 0x280000010e 	AR: 0x11c 	MC: 0x410
+   	DataStack[267, 267, 66 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 734 	mPC: 0x1 	PC: 0x10e 	BUF: 0x280000010e 	AR: 0x11c 	MC: 0x4800002
+   	DataStack[267, 267, 66 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 735 	mPC: 0x2 	PC: 0x10e 	BUF: 0x280000010e 	AR: 0x10e 	MC: 0x60
+   	DataStack[267, 267, 66 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 736 	mPC: 0x23 	PC: 0x10e 	BUF: 0x2300000000 	AR: 0x10e 	MC: 0x410
+   	DataStack[267, 267, 66 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 737 	mPC: 0x24 	PC: 0x10e 	BUF: 0x42 	AR: 0x10e 	MC: 0x81100
+   	DataStack[267, 267, 66, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 738 	mPC: 0x1 	PC: 0x10f 	BUF: 0x42 	AR: 0x10e 	MC: 0x6
+   	DataStack[267, 267, 66, 66 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 739 	mPC: 0x2 	PC: 0x10f 	BUF: 0x42 	AR: 0x10f 	MC: 0x60
+   	DataStack[267, 267, 66, 66 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 740 	mPC: 0x23 	PC: 0x10f 	BUF: 0x2300000000 	AR: 0x10f 	MC: 0x410
+   	DataStack[267, 267, 66, 66 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 741 	mPC: 0x24 	PC: 0x10f 	BUF: 0x42 	AR: 0x10f 	MC: 0x81100
+   	DataStack[267, 267, 66, 66, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 742 	mPC: 0x1 	PC: 0x110 	BUF: 0x42 	AR: 0x10f 	MC: 0x6
+   	DataStack[267, 267, 66, 66, 66 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 743 	mPC: 0x2 	PC: 0x110 	BUF: 0x42 	AR: 0x110 	MC: 0x60
+   	DataStack[267, 267, 66, 66, 66 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 744 	mPC: 0x17 	PC: 0x110 	BUF: 0x1700000000 	AR: 0x110 	MC: 0x410
+   	DataStack[267, 267, 66, 66, 66 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 745 	mPC: 0x18 	PC: 0x110 	BUF: 0x1700000000 	AR: 0x110 	MC: 0x2200
+   	DataStack[267, 267, 66, 66 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 746 	mPC: 0x1 	PC: 0x111 	BUF: 0x1104 	AR: 0x110 	MC: 0x11006
+   	DataStack[267, 267, 66, 4356 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 747 	mPC: 0x2 	PC: 0x111 	BUF: 0x1104 	AR: 0x111 	MC: 0x60
+   	DataStack[267, 267, 66, 4356 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 748 	mPC: 0xf 	PC: 0x111 	BUF: 0xf00000000 	AR: 0x111 	MC: 0x410
+   	DataStack[267, 267, 66, 4356 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 749 	mPC: 0x10 	PC: 0x111 	BUF: 0x1104 	AR: 0x111 	MC: 0x81200
+   	DataStack[267, 267, 66 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 750 	mPC: 0x11 	PC: 0x111 	BUF: 0x1104 	AR: 0x111 	MC: 0x1004
+   	DataStack[267, 267, 4356 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 751 	mPC: 0x12 	PC: 0x111 	BUF: 0x42 	AR: 0x111 	MC: 0x80100
+   	DataStack[267, 267, 4356, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 752 	mPC: 0x1 	PC: 0x112 	BUF: 0x42 	AR: 0x111 	MC: 0x6
+   	DataStack[267, 267, 4356, 66 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 753 	mPC: 0x2 	PC: 0x112 	BUF: 0x42 	AR: 0x112 	MC: 0x60
+   	DataStack[267, 267, 4356, 66 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 754 	mPC: 0x5 	PC: 0x112 	BUF: 0x580000002 	AR: 0x112 	MC: 0x410
+   	DataStack[267, 267, 4356, 66 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 755 	mPC: 0x6 	PC: 0x112 	BUF: 0x580000002 	AR: 0x80000002 	MC: 0x1a0
+   	DataStack[267, 267, 4356, 66, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 756 	mPC: 0x1 	PC: 0x113 	BUF: 0x2 	AR: 0x80000002 	MC: 0x406
+   	DataStack[267, 267, 4356, 66, 2 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 757 	mPC: 0x2 	PC: 0x113 	BUF: 0x2 	AR: 0x113 	MC: 0x60
+   	DataStack[267, 267, 4356, 66, 2 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 758 	mPC: 0x17 	PC: 0x113 	BUF: 0x1700000000 	AR: 0x113 	MC: 0x410
+   	DataStack[267, 267, 4356, 66, 2 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 759 	mPC: 0x18 	PC: 0x113 	BUF: 0x1700000000 	AR: 0x113 	MC: 0x2200
+   	DataStack[267, 267, 4356, 66 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 760 	mPC: 0x1 	PC: 0x114 	BUF: 0x84 	AR: 0x113 	MC: 0x11006
+   	DataStack[267, 267, 4356, 132 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 761 	mPC: 0x2 	PC: 0x114 	BUF: 0x84 	AR: 0x114 	MC: 0x60
+   	DataStack[267, 267, 4356, 132 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 762 	mPC: 0x5 	PC: 0x114 	BUF: 0x580000007 	AR: 0x114 	MC: 0x410
+   	DataStack[267, 267, 4356, 132 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 763 	mPC: 0x6 	PC: 0x114 	BUF: 0x580000007 	AR: 0x80000007 	MC: 0x1a0
+   	DataStack[267, 267, 4356, 132, 0 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 764 	mPC: 0x1 	PC: 0x115 	BUF: 0x7 	AR: 0x80000007 	MC: 0x406
+   	DataStack[267, 267, 4356, 132, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 765 	mPC: 0x2 	PC: 0x115 	BUF: 0x7 	AR: 0x115 	MC: 0x60
+   	DataStack[267, 267, 4356, 132, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 766 	mPC: 0x15 	PC: 0x115 	BUF: 0x1500000000 	AR: 0x115 	MC: 0x410
+   	DataStack[267, 267, 4356, 132, 7 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 767 	mPC: 0x16 	PC: 0x115 	BUF: 0x1500000000 	AR: 0x115 	MC: 0x2200
+   	DataStack[267, 267, 4356, 132 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 768 	mPC: 0x1 	PC: 0x116 	BUF: 0x7d 	AR: 0x115 	MC: 0x9006
+   	DataStack[267, 267, 4356, 125 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 769 	mPC: 0x2 	PC: 0x116 	BUF: 0x7d 	AR: 0x116 	MC: 0x60
+   	DataStack[267, 267, 4356, 125 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 770 	mPC: 0x13 	PC: 0x116 	BUF: 0x1300000000 	AR: 0x116 	MC: 0x410
+   	DataStack[267, 267, 4356, 125 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 771 	mPC: 0x14 	PC: 0x116 	BUF: 0x1300000000 	AR: 0x116 	MC: 0x2200
+   	DataStack[267, 267, 4356 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 772 	mPC: 0x1 	PC: 0x117 	BUF: 0x1181 	AR: 0x116 	MC: 0x5006
+   	DataStack[267, 267, 4481 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 773 	mPC: 0x2 	PC: 0x117 	BUF: 0x1181 	AR: 0x117 	MC: 0x60
+   	DataStack[267, 267, 4481 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 774 	mPC: 0x29 	PC: 0x117 	BUF: 0x2900000000 	AR: 0x117 	MC: 0x410
+   	DataStack[267, 267, 4481 <-]
+   	RetStack[285 <-]
+  DEBUG   machine:simulation     Tick: 775 	mPC: 0x1 	PC: 0x11d 	BUF: 0x11d 	AR: 0x117 	MC: 0x8800002
+   	DataStack[267, 267, 4481 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 776 	mPC: 0x2 	PC: 0x11d 	BUF: 0x11d 	AR: 0x11d 	MC: 0x60
+   	DataStack[267, 267, 4481 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 777 	mPC: 0xf 	PC: 0x11d 	BUF: 0xf00000000 	AR: 0x11d 	MC: 0x410
+   	DataStack[267, 267, 4481 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 778 	mPC: 0x10 	PC: 0x11d 	BUF: 0x1181 	AR: 0x11d 	MC: 0x81200
+   	DataStack[267, 267 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 779 	mPC: 0x11 	PC: 0x11d 	BUF: 0x1181 	AR: 0x11d 	MC: 0x1004
+   	DataStack[267, 4481 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 780 	mPC: 0x12 	PC: 0x11d 	BUF: 0x10b 	AR: 0x11d 	MC: 0x80100
+   	DataStack[267, 4481, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 781 	mPC: 0x1 	PC: 0x11e 	BUF: 0x10b 	AR: 0x11d 	MC: 0x6
+   	DataStack[267, 4481, 267 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 782 	mPC: 0x2 	PC: 0x11e 	BUF: 0x10b 	AR: 0x11e 	MC: 0x60
+   	DataStack[267, 4481, 267 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 783 	mPC: 0xc 	PC: 0x11e 	BUF: 0xc00000000 	AR: 0x11e 	MC: 0x410
+   	DataStack[267, 4481, 267 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 784 	mPC: 0xd 	PC: 0x11e 	BUF: 0x10b 	AR: 0x11e 	MC: 0x81200
+   	DataStack[267, 4481 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 785 	mPC: 0xe 	PC: 0x11e 	BUF: 0x10b 	AR: 0x10b 	MC: 0xa0
+   	DataStack[267, 4481 <-]
+   	RetStack[ <-]
+  DEBUG   datapath:sig_mem_write MEM[267]: 66 -> 4481
+  DEBUG   machine:simulation     Tick: 786 	mPC: 0x1 	PC: 0x11f 	BUF: 0x10b 	AR: 0x10b 	MC: 0xa02
+   	DataStack[267 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 787 	mPC: 0x2 	PC: 0x11f 	BUF: 0x10b 	AR: 0x11f 	MC: 0x60
+   	DataStack[267 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 788 	mPC: 0x1f 	PC: 0x11f 	BUF: 0x1f00000000 	AR: 0x11f 	MC: 0x410
+   	DataStack[267 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 789 	mPC: 0x20 	PC: 0x11f 	BUF: 0x10c 	AR: 0x11f 	MC: 0x281000
+   	DataStack[267 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 790 	mPC: 0x1 	PC: 0x120 	BUF: 0x10c 	AR: 0x11f 	MC: 0x6
+   	DataStack[268 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 791 	mPC: 0x2 	PC: 0x120 	BUF: 0x10c 	AR: 0x120 	MC: 0x60
+   	DataStack[268 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 792 	mPC: 0x23 	PC: 0x120 	BUF: 0x2300000000 	AR: 0x120 	MC: 0x410
+   	DataStack[268 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 793 	mPC: 0x24 	PC: 0x120 	BUF: 0x10c 	AR: 0x120 	MC: 0x81100
+   	DataStack[268, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 794 	mPC: 0x1 	PC: 0x121 	BUF: 0x10c 	AR: 0x120 	MC: 0x6
+   	DataStack[268, 268 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 795 	mPC: 0x2 	PC: 0x121 	BUF: 0x10c 	AR: 0x121 	MC: 0x60
+   	DataStack[268, 268 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 796 	mPC: 0x5 	PC: 0x121 	BUF: 0x50000010d 	AR: 0x121 	MC: 0x410
+   	DataStack[268, 268 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 797 	mPC: 0x6 	PC: 0x121 	BUF: 0x50000010d 	AR: 0x10d 	MC: 0x1a0
+   	DataStack[268, 268, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 798 	mPC: 0x1 	PC: 0x122 	BUF: 0x104 	AR: 0x10d 	MC: 0x406
+   	DataStack[268, 268, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 799 	mPC: 0x2 	PC: 0x122 	BUF: 0x104 	AR: 0x122 	MC: 0x60
+   	DataStack[268, 268, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 800 	mPC: 0x15 	PC: 0x122 	BUF: 0x1500000000 	AR: 0x122 	MC: 0x410
+   	DataStack[268, 268, 260 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 801 	mPC: 0x16 	PC: 0x122 	BUF: 0x1500000000 	AR: 0x122 	MC: 0x2200
+   	DataStack[268, 268 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 802 	mPC: 0x1 	PC: 0x123 	BUF: 0x8 	AR: 0x122 	MC: 0x9006
+   	DataStack[268, 8 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 803 	mPC: 0x2 	PC: 0x123 	BUF: 0x8 	AR: 0x123 	MC: 0x60
+   	DataStack[268, 8 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 804 	mPC: 0x5 	PC: 0x123 	BUF: 0x50000010c 	AR: 0x123 	MC: 0x410
+   	DataStack[268, 8 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 805 	mPC: 0x6 	PC: 0x123 	BUF: 0x50000010c 	AR: 0x10c 	MC: 0x1a0
+   	DataStack[268, 8, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 806 	mPC: 0x1 	PC: 0x124 	BUF: 0x8 	AR: 0x10c 	MC: 0x406
+   	DataStack[268, 8, 8 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 807 	mPC: 0x2 	PC: 0x124 	BUF: 0x8 	AR: 0x124 	MC: 0x60
+   	DataStack[268, 8, 8 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 808 	mPC: 0x15 	PC: 0x124 	BUF: 0x1500000000 	AR: 0x124 	MC: 0x410
+   	DataStack[268, 8, 8 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 809 	mPC: 0x16 	PC: 0x124 	BUF: 0x1500000000 	AR: 0x124 	MC: 0x2200
+   	DataStack[268, 8 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 810 	mPC: 0x1 	PC: 0x125 	BUF: 0x0 	AR: 0x124 	MC: 0x9006
+   	DataStack[268, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 811 	mPC: 0x2 	PC: 0x125 	BUF: 0x0 	AR: 0x125 	MC: 0x60
+   	DataStack[268, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 812 	mPC: 0x26 	PC: 0x125 	BUF: 0x2600000128 	AR: 0x125 	MC: 0x410
+   	DataStack[268, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 813 	mPC: 0x1 	PC: 0x128 	BUF: 0x2600000128 	AR: 0x125 	MC: 0x1800002
+   	DataStack[268, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 814 	mPC: 0x2 	PC: 0x128 	BUF: 0x2600000128 	AR: 0x128 	MC: 0x60
+   	DataStack[268, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 815 	mPC: 0x4 	PC: 0x128 	BUF: 0x400000000 	AR: 0x128 	MC: 0x410
+   	DataStack[268, 0 <-]
+   	RetStack[ <-]
+  INFO    machine:simulation    Program halted
+  INFO    machine:simulation    Output: 
