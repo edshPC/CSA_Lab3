@@ -211,7 +211,14 @@ CLI: `python translator.py <input_file> <target_file>`
 
 ## Модель процессора
 
-CLI: `python machine.py <program_file> [<input_file>]`
+CLI: `python machine.py [-t TICKLIM] [-m MEMSIZE] [-d DSIZE] [-r RSIZE] [-l LOGLEVEL] program_file [input_file]`,\
+где
+
+* `TICKLIM` - лимит тактов симуляции (default 10^4)
+* `MEMSIZE` - размер основной памяти в ячейках (default 2^16)
+* `DSIZE` - размер стека данных процессора (default 2^8)
+* `RSIZE` - размер стека возвратов процессора (default 2^8)
+* `LOGLEVEL` - уровень логирования (default DEBUG)
 
 Реализована в модуле [machine](./machine.py)
 

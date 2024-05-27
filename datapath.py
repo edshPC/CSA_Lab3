@@ -34,14 +34,14 @@ class IOController:
 class DataPath:
     controlunit = None
 
-    def __init__(self, input_buf: list[str], memory_size: int = 2**16, ds_size: int = 2**8, **_):
+    def __init__(self, input_buf: list[str], memsize: int = 2**16, dsize: int = 2**8, **_):
         self.address_reg = 0
         self.buffer = 0
         self.alu = ALU()
 
-        self.data_stack = Stack(maxlen=ds_size)
-        self.memory_size = memory_size
-        self.memory = [0] * memory_size
+        self.data_stack = Stack(maxlen=dsize)
+        self.memory_size = memsize
+        self.memory = [0] * memsize
         # Адреса нахождения инструкций в памяти микрокоманд
         self.instruction_micro_address = {}
         self.io_controller = IOController()
