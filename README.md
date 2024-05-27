@@ -211,7 +211,7 @@ CLI: `python translator.py <input_file> <target_file>`
 
 ## Модель процессора
 
-CLI: `python machine.py [-t TICKLIM] [-m MEMSIZE] [-d DSIZE] [-r RSIZE] [-l LOGLEVEL] program_file [input_file]`,\
+CLI: `python machine.py [-h | --help] <program_file> [input_file] [-t TICKLIM] [-m MEMSIZE] [-d DSIZE] [-r RSIZE] [-l LOGLEVEL]`,\
 где
 
 * `TICKLIM` - лимит тактов симуляции (default 10^4)
