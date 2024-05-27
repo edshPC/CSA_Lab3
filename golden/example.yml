@@ -1,7 +1,7 @@
 in_source: |
   ; Example of commands
-  number:
-      word 777
+  fake_number:
+      add ; Используем команду как данные
   hex:
       word 0xA10F
   buf:
@@ -27,9 +27,8 @@ in_source: |
       add ; x^2 + 2x - 7
       ret
 
-  ; Программа работает с массивом array, применяя функцию к каждому элементу и обновляя его в памяти
   _start:
-      push array_pointer ; *arr+0
+      push array_pointer ; *arr
   loop:
       dup
       dup ; *arr+i x3
@@ -47,11 +46,11 @@ in_source: |
       pop ; *arr+i+1 ; next element
       jmp loop
   end:
-      hlt
+      push fake_number ; Кладем на стек команду add как данные
 in_stdin: |
   -
 out_code: |-
-  {"start": 280, "code": [{"index": 1, "opcode": "mem", "args": [777]},
+  {"start": 280, "code": [{"index": 1, "opcode": "add", "args": []},
    {"index": 2, "opcode": "mem", "args": [41231]},
    {"index": 3, "opcode": "mem", "args": []},
    {"index": 259, "opcode": "mem", "args": [0]},
@@ -84,13 +83,13 @@ out_code: |-
    {"index": 293, "opcode": "jz", "args": [296]},
    {"index": 294, "opcode": "pop", "args": []},
    {"index": 295, "opcode": "jmp", "args": [281]},
-   {"index": 296, "opcode": "hlt", "args": []},
+   {"index": 296, "opcode": "push", "args": [1]},
    {"index": 297, "opcode": "hlt", "args": []}]}
 out_stdout: |
-  source LoC: 50 code instr: 35
+  source LoC: 49 code instr: 35
   ============================================================
   
-  Ticks: 815
+  Ticks: 819
 out_log: |
   DEBUG   machine:simulation     Tick: 0 	mPC: 0x1 	PC: 0x118 	BUF: 0x0 	AR: 0x0 	MC: 0x0
    	DataStack[ <-]
@@ -2545,8 +2544,20 @@ out_log: |
   DEBUG   machine:simulation     Tick: 814 	mPC: 0x2 	PC: 0x128 	BUF: 0x2600000128 	AR: 0x128 	MC: 0x60
    	DataStack[268, 0 <-]
    	RetStack[ <-]
-  DEBUG   machine:simulation     Tick: 815 	mPC: 0x4 	PC: 0x128 	BUF: 0x400000000 	AR: 0x128 	MC: 0x410
+  DEBUG   machine:simulation     Tick: 815 	mPC: 0x5 	PC: 0x128 	BUF: 0x500000001 	AR: 0x128 	MC: 0x410
    	DataStack[268, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 816 	mPC: 0x6 	PC: 0x128 	BUF: 0x500000001 	AR: 0x1 	MC: 0x1a0
+   	DataStack[268, 0, 0 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 817 	mPC: 0x1 	PC: 0x129 	BUF: 0x1300000000 	AR: 0x1 	MC: 0x406
+   	DataStack[268, 0, 81604378624 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 818 	mPC: 0x2 	PC: 0x129 	BUF: 0x1300000000 	AR: 0x129 	MC: 0x60
+   	DataStack[268, 0, 81604378624 <-]
+   	RetStack[ <-]
+  DEBUG   machine:simulation     Tick: 819 	mPC: 0x4 	PC: 0x129 	BUF: 0x400000000 	AR: 0x129 	MC: 0x410
+   	DataStack[268, 0, 81604378624 <-]
    	RetStack[ <-]
   INFO    machine:simulation    Program halted
   INFO    machine:simulation    Output: 

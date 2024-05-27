@@ -1,6 +1,6 @@
 ; Example of commands
-number:
-    word 777
+fake_number:
+    add ; Используем команду как данные
 hex:
     word 0xA10F
 buf:
@@ -45,4 +45,4 @@ loop:
     pop ; *arr+i+1 ; next element
     jmp loop
 end:
-    hlt
+    push fake_number ; Кладем на стек команду add как данные
